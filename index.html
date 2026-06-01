@@ -5,376 +5,700 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Uman.ai — Employee Onboarding</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300&family=DM+Serif+Display:ital@0;1&display=swap');
+
 :root {
-  --o: #E8714A; --ol: #F5A678; --od: #C45A32;
-  --dk: #0A0A0A; --dk2: #141414; --dk3: #1C1C1C;
-  --wh: #FFFFFF; --mid: #777777; --lt: #AAAAAA;
-  --bl: #4A6CF7; --gr: #059669; --pu: #7B5CF0; --ye: #F59E0B;
+  /* Uman brand gradient palette */
+  --blue:    #7EB8D4;
+  --blue2:   #5A9EC4;
+  --pink:    #D4788A;
+  --pink2:   #C45A6E;
+  --orange:  #E8A07A;
+  --orange2: #D4724A;
+  --cream:   #F5EDE6;
+  --white:   #FFFFFF;
+
+  /* Neutral */
+  --dk:  #0D0E12;
+  --dk2: #13151C;
+  --dk3: #1A1C26;
+  --mid: #7A7E92;
+  --lt:  #B0B5CC;
+
+  /* Accent colors for tags */
+  --acc-blue:   #5A9EC4;
+  --acc-pink:   #C45A6E;
+  --acc-orange: #D4724A;
+  --acc-green:  #3DAB8E;
+  --acc-purple: #8B72D4;
+  --acc-yellow: #D4A43D;
+
+  --grad: linear-gradient(135deg, #7EB8D4 0%, #C47890 35%, #E8A07A 70%, #F5EDE6 100%);
+  --grad2: linear-gradient(135deg, #7EB8D4 0%, #D4788A 50%, #E8A07A 100%);
+  --grad3: linear-gradient(120deg, rgba(126,184,212,0.15) 0%, rgba(212,120,138,0.15) 50%, rgba(232,160,122,0.12) 100%);
 }
+
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;font-family:'Trebuchet MS','Segoe UI',Arial,sans-serif;background:var(--dk);overflow:hidden;color:var(--wh)}
+html,body{
+  width:100%;height:100%;
+  font-family:'DM Sans',sans-serif;
+  background:#F7F2EE;
+  overflow:hidden;
+  color:#1A1A1A;
+}
 
-/* PROGRESS */
-.prog{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--o),var(--ol));transition:width .5s cubic-bezier(.4,0,.2,1);z-index:100}
+/* 
+   GRADIENT BACKGROUND CANVAS
+ */
+.bg-canvas{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background: radial-gradient(ellipse 70% 60% at 0% 0%, rgba(126,184,212,0.38) 0%, transparent 55%),
+              radial-gradient(ellipse 65% 55% at 100% 100%, rgba(232,160,122,0.40) 0%, transparent 55%),
+              radial-gradient(ellipse 50% 45% at 5% 100%, rgba(212,120,138,0.22) 0%, transparent 50%),
+              #F7F2EE;
+}
+.bg-canvas::after{
+  content:'';position:absolute;inset:0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  opacity:.4;
+}
 
-/* NAV */
-.nav{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:100;display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.05);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.08);border-radius:100px;padding:7px 15px}
-.nb{width:32px;height:32px;border-radius:50%;border:none;background:rgba(255,255,255,.07);color:white;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
-.nb:hover{background:var(--o)}
+/* 
+   PROGRESS BAR
+ */
+.prog{
+  position:fixed;top:0;left:0;height:2px;
+  background:var(--grad2);
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+  z-index:100;
+}
+
+/* 
+   NAVIGATION
+ */
+.nav{
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+  z-index:100;display:flex;align-items:center;gap:12px;
+  background:rgba(255,255,255,0.78);
+  backdrop-filter:blur(24px);
+  border:1px solid rgba(0,0,0,.09);
+  border-radius:100px;padding:7px 15px;
+}
+.nb{
+  width:32px;height:32px;border-radius:50%;border:none;
+  background:rgba(0,0,0,.07);color:#1A1A1A;font-size:14px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .2s;font-family:'DM Sans',sans-serif;
+}
+.nb:hover{background:rgba(212,120,138,0.4);}
 .ndots{display:flex;gap:4px;align-items:center}
-.dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer;transition:all .3s}
-.dot.active{background:var(--o);width:14px;border-radius:2px}
-.nc{font-size:10px;color:rgba(255,255,255,.25);min-width:32px;text-align:center}
-.kh{position:fixed;top:14px;right:18px;font-size:9px;color:rgba(255,255,255,.15);z-index:100}
+.dot{
+  width:4px;height:4px;border-radius:50%;
+  background:rgba(0,0,0,.12);cursor:pointer;transition:all .3s;
+}
+.dot.active{background:var(--pink);width:14px;border-radius:2px;}
+.nc{font-size:10px;color:rgba(0,0,0,.35);min-width:32px;text-align:center}
+.kh{position:fixed;top:14px;right:18px;font-size:9px;color:rgba(0,0,0,.2);z-index:100;letter-spacing:2px}
 
-/* SLIDES */
+/* 
+   SLIDE ENGINE
+ */
 .sw{width:100%;height:100vh;position:relative;overflow:hidden}
-.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .5s cubic-bezier(.4,0,.2,1),transform .5s cubic-bezier(.4,0,.2,1);transform:translateY(20px)}
+.slide{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .5s cubic-bezier(.4,0,.2,1), transform .5s cubic-bezier(.4,0,.2,1);
+  transform:translateY(20px);
+  z-index:1;
+}
 .slide.active{opacity:1;pointer-events:all;transform:translateY(0)}
 .slide.exit{opacity:0;transform:translateY(-20px)}
 
-/* ORBS */
+/* 
+   ORBS / DECORATIVE
+ */
 .orb{position:absolute;border-radius:50%;pointer-events:none}
 @keyframes fl{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-14px) scale(1.03)}}
 @keyframes sp{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 @keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pi{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(232,113,74,.35)}50%{box-shadow:0 0 0 10px rgba(232,113,74,0)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(212,120,138,.35)}50%{box-shadow:0 0 0 10px rgba(212,120,138,0)}}
 
-/* COMMON */
-.in{width:100%;max-width:1100px;padding:44px 64px;position:relative;z-index:2}
-.lbl{font-size:8px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--o);margin-bottom:8px}
-.h1{font-size:clamp(28px,4vw,48px);font-weight:800;letter-spacing:-2px;line-height:1;margin-bottom:24px;color:var(--wh)}
-.h1 span{color:var(--o)}
-.card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:22px 20px;transition:border-color .3s,transform .2s;cursor:default}
-.card:hover{border-color:rgba(232,113,74,.3);transform:translateY(-2px)}
+/* 
+   COMMON LAYOUT
+ */
+.in{width:100%;max-width:1100px;padding:40px 64px;position:relative;z-index:2}
 
-/* SECTION PILLS */
-.section-nav{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap}
-.snav-btn{padding:7px 16px;border-radius:100px;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.35);font-size:11px;font-weight:700;cursor:pointer;transition:all .25s;font-family:'Trebuchet MS','Segoe UI',Arial,sans-serif}
-.snav-btn:hover{border-color:rgba(255,255,255,.25);color:white}
-.snav-btn.active{background:var(--o);border-color:var(--o);color:white}
+.lbl{
+  font-size:8px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:8px;display:inline-block;
+}
+.h1{font-size:clamp(26px,3.8vw,46px);font-weight:800;letter-spacing:-2px;line-height:1.02;margin-bottom:22px;color:#1A1A1A;font-family:'DM Sans',sans-serif}
+.h1 .g{background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 
-/* TABS */
-.tabs{display:flex;margin-bottom:22px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.07);width:fit-content}
-.tab{padding:9px 22px;font-weight:700;font-size:11px;cursor:pointer;background:transparent;color:rgba(255,255,255,.3);border:none;transition:all .3s;font-family:'Trebuchet MS','Segoe UI',Arial,sans-serif}
-.tab.active{background:var(--o);color:white}
+.card{
+  background:rgba(255,255,255,.7);
+  border:1px solid rgba(0,0,0,.07);
+  border-radius:16px;padding:22px 20px;
+  transition:border-color .3s,transform .2s;cursor:default;
+}
+.card:hover{border-color:rgba(212,120,138,.3);transform:translateY(-2px)}
+
+.ibox{
+  background:rgba(255,255,255,.65);
+  border:1px solid rgba(0,0,0,.07);
+  border-radius:12px;padding:16px 20px;
+  font-size:12px;color:#666;line-height:1.7;
+}
+.ibox strong{color:#1A1A1A;font-weight:600}
+
+/* 
+   TABS / SECTION PILLS
+ */
+.tabs{display:flex;margin-bottom:22px;border-radius:10px;overflow:hidden;border:1px solid rgba(0,0,0,.08);width:fit-content}
+.tab{padding:9px 22px;font-weight:700;font-size:11px;cursor:pointer;background:transparent;color:rgba(0,0,0,.4);border:none;transition:all .3s;font-family:'DM Sans',sans-serif}
+.tab.active{background:var(--grad2);color:white}
 .tab-panel{display:none}
 .tab-panel.active{display:block;animation:fu .3s ease}
 
-/* ── COVER ── */
-.cover-wrap{position:relative;z-index:2;padding:0 64px;max-width:1100px;width:100%}
-.logo-row{display:flex;align-items:center;gap:10px;margin-bottom:44px}
-.logo-c{width:38px;height:38px;border-radius:50%;background:var(--wh);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:var(--dk)}
-.logo-n{font-size:16px;font-weight:600;color:white}
-.ctag{display:inline-block;background:rgba(232,113,74,.1);border:1px solid rgba(232,113,74,.25);color:var(--ol);font-size:8px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;padding:4px 12px;border-radius:100px;margin-bottom:16px}
-.ctitle{font-size:clamp(44px,7vw,88px);font-weight:800;letter-spacing:-4px;line-height:.98;margin-bottom:18px;color:white}
-.ctitle span{color:var(--o)}
-.csub{font-size:14px;color:rgba(255,255,255,.38);font-weight:300;margin-bottom:36px;max-width:440px;line-height:1.6}
-.cpill{display:inline-flex;align-items:center;gap:9px;background:white;color:var(--dk);font-weight:700;font-size:12px;padding:12px 22px;border-radius:100px;cursor:pointer;border:none;transition:transform .2s,box-shadow .2s;font-family:'Trebuchet MS','Segoe UI',Arial,sans-serif}
+/* 
+   SLIDE 1 — COVER
+ */
+.cover-slide{
+  position:relative;width:100%;height:100%;
+  display:flex;align-items:center;justify-content:flex-start;
+  overflow:hidden;
+}
+/* Big gradient background for cover */
+.cover-grad{
+  position:absolute;inset:0;
+  background: radial-gradient(ellipse 80% 70% at 0% 8%, rgba(126,184,212,0.65) 0%, transparent 52%),
+              radial-gradient(ellipse 65% 60% at 50% 65%, rgba(212,120,138,0.5) 0%, transparent 52%),
+              radial-gradient(ellipse 75% 65% at 100% 100%, rgba(232,160,122,0.65) 0%, transparent 52%),
+              radial-gradient(ellipse 55% 50% at 85% 5%, rgba(245,237,230,0.8) 0%, transparent 50%),
+              #EDE8E4;
+  pointer-events:none;
+}
+/* Large U filigrane like uman slides */
+.cover-u-mark{
+  position:absolute;right:-80px;top:50%;transform:translateY(-50%);
+  font-size:580px;font-weight:900;
+  color:rgba(255,255,255,0.35);
+  font-family:'DM Sans',sans-serif;
+  line-height:1;
+  pointer-events:none;
+  user-select:none;
+  letter-spacing:-30px;
+}
+.cover-wrap{position:relative;z-index:2;padding:0 80px;max-width:700px}
+.logo-row{display:flex;align-items:center;gap:10px;margin-bottom:52px}
+.logo-c{
+  width:38px;height:38px;border-radius:50%;
+  background:var(--white);display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:16px;color:var(--dk);
+}
+.logo-n{font-size:17px;font-weight:700;color:#1A1A1A;letter-spacing:-.5px}
+.ctag{
+  display:inline-block;
+  background:rgba(212,120,138,.12);border:1px solid rgba(212,120,138,.25);
+  color:rgba(245,237,230,.7);
+  font-size:8px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
+  padding:4px 12px;border-radius:100px;margin-bottom:16px;
+}
+.ctitle{
+  font-size:clamp(40px,6.5vw,82px);
+  font-weight:800;letter-spacing:-4px;line-height:.98;
+  margin-bottom:18px;color:#1A1A1A;
+}
+.ctitle .cg{
+  background:var(--grad2);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.csub{font-size:14px;color:rgba(0,0,0,.45);font-weight:300;margin-bottom:36px;max-width:420px;line-height:1.65}
+.cpill{
+  display:inline-flex;align-items:center;gap:9px;
+  background:#1A1A1A;color:white;
+  font-weight:700;font-size:12px;
+  padding:12px 22px;border-radius:100px;
+  cursor:pointer;border:none;
+  transition:transform .2s,box-shadow .2s;
+  font-family:'DM Sans',sans-serif;
+}
 .cpill:hover{transform:translateY(-2px);box-shadow:0 16px 32px rgba(0,0,0,.3)}
-.cpill .arr{width:22px;height:22px;border-radius:50%;background:var(--o);display:flex;align-items:center;justify-content:center;font-size:11px}
+.cpill .arr{
+  width:22px;height:22px;border-radius:50%;
+  background:var(--grad2);
+  display:flex;align-items:center;justify-content:center;font-size:11px;color:white;
+}
 
-/* ── WHO WE ARE ── */
+/* Trusted logos strip */
+.trust-strip{
+  position:absolute;bottom:36px;left:80px;right:80px;
+  display:flex;align-items:center;gap:8px;
+}
+.trust-label{font-size:9px;color:rgba(0,0,0,.4);letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap;margin-right:8px}
+.trust-logos{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.trust-logo{
+  padding:5px 13px;border-radius:7px;
+  background:rgba(255,255,255,.45);border:1px solid rgba(0,0,0,.1);
+  font-size:10px;font-weight:700;color:rgba(0,0,0,.55);
+  letter-spacing:.5px;
+}
+
+/* 
+   SLIDE 2 — WHO WE ARE
+ */
 .stats3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
-.stat-c{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:20px 18px;transition:all .3s;cursor:default}
-.stat-c:hover{border-color:rgba(232,113,74,.35);background:rgba(232,113,74,.04)}
-.stat-n{font-size:32px;font-weight:800;color:var(--o);letter-spacing:-2px;line-height:1;margin-bottom:5px}
-.stat-l{font-size:11px;color:var(--mid);line-height:1.4}
-.tbar{background:linear-gradient(135deg,var(--o),var(--od));border-radius:12px;padding:18px 22px;margin-bottom:16px}
+.stat-c{
+  background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.07);
+  border-radius:16px;padding:20px 18px;transition:all .3s;cursor:default;
+}
+.stat-c:hover{border-color:rgba(212,120,138,.35);background:rgba(212,120,138,.04)}
+.stat-n{font-size:32px;font-weight:800;letter-spacing:-2px;line-height:1;margin-bottom:5px;background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.stat-l{font-size:11px;color:#888;line-height:1.4}
+.tbar{
+  background:var(--grad);
+  border-radius:12px;padding:18px 22px;margin-bottom:16px;
+}
 .tbar p{font-size:17px;font-weight:700;color:white;letter-spacing:-.3px}
-.tbar span{font-size:11px;color:rgba(255,255,255,.6);display:block;margin-top:3px}
-.ibox{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:16px 20px;font-size:12px;color:rgba(255,255,255,.5);line-height:1.7}
-.ibox strong{color:rgba(255,255,255,.8);font-weight:600}
+.tbar span{font-size:11px;color:rgba(255,255,255,.7);display:block;margin-top:3px}
 
-/* ── TEAM ── */
+/* 
+   SLIDE 3 — TEAM
+ */
 .tgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px}
-.tcard{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;transition:all .3s;position:relative;overflow:visible;text-align:center}
-.tcard:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.18)}
+.tcard{
+  background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.07);
+  border-radius:16px;padding:18px 14px;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  cursor:pointer;transition:all .3s;position:relative;overflow:visible;text-align:center;
+}
+.tcard:hover{transform:translateY(-3px);border-color:rgba(0,0,0,.2)}
 .av{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;color:white}
-.tn{font-size:13px;font-weight:700;color:white}
+.av-grad{background:var(--grad2)}
+.av-blue{background:linear-gradient(135deg,var(--blue2),var(--blue))}
+.av-green{background:linear-gradient(135deg,var(--acc-green),#2D8A70)}
+.av-purple{background:linear-gradient(135deg,var(--acc-purple),#7255C0)}
+.av-dark{background:#555;border:2px solid rgba(255,255,255,.3)}
+.tn{font-size:13px;font-weight:700;color:#1A1A1A}
 .tr{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin:2px 0}
-.td{font-size:10px;color:rgba(255,255,255,.3)}
-/* Hover popup */
-.hpop{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) scale(.93);background:#1A1A1A;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:14px 16px;width:220px;opacity:0;pointer-events:none;transition:all .22s cubic-bezier(.4,0,.2,1);z-index:200;box-shadow:0 16px 36px rgba(0,0,0,.5);text-align:left}
+.td{font-size:10px;color:#AAAAAA}
+.hpop{
+  position:absolute;bottom:calc(100% + 8px);left:50%;
+  transform:translateX(-50%) scale(.93);
+  background:#FFF;border:1px solid rgba(0,0,0,.1);
+  border-radius:12px;padding:14px 16px;width:220px;
+  opacity:0;pointer-events:none;
+  transition:all .22s cubic-bezier(.4,0,.2,1);
+  z-index:200;box-shadow:0 16px 36px rgba(0,0,0,.1);text-align:left;
+}
 .tcard:hover .hpop{opacity:1;pointer-events:all;transform:translateX(-50%) scale(1)}
-.hpop h4{font-size:12px;font-weight:700;color:white;margin-bottom:5px}
-.hpop p{font-size:10px;color:var(--mid);line-height:1.5}
-.hpop .ht{margin-top:8px;padding:6px 8px;background:rgba(232,113,74,.1);border:1px solid rgba(232,113,74,.2);border-radius:7px;font-size:9px;color:var(--ol)}
+.hpop h4{font-size:12px;font-weight:700;color:#1A1A1A;margin-bottom:5px}
+.hpop p{font-size:10px;color:#888;line-height:1.5}
+.hpop .ht{
+  margin-top:8px;padding:6px 8px;
+  background:rgba(212,120,138,.1);border:1px solid rgba(212,120,138,.2);
+  border-radius:7px;font-size:9px;color:rgba(180,90,50,.9);
+}
 
-/* ── PLATFORM / MODULES ── */
-.prod-layout{display:grid;grid-template-columns:1fr 1.5fr;gap:26px;align-items:start;width:100%;max-width:1100px;padding:44px 64px}
+/* 
+   SLIDE 4 — PLATFORM
+ */
+.prod-layout{display:grid;grid-template-columns:1fr 1.5fr;gap:26px;align-items:start;width:100%;max-width:1100px;padding:40px 64px}
 .mtabs{display:flex;flex-direction:column;gap:8px}
-.mtab{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;cursor:pointer;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.07);transition:all .3s}
-.mtab:hover{border-color:var(--o)}
-.mtab.active{background:var(--o);border-color:var(--o)}
-.mnum{width:30px;height:30px;min-width:30px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:white}
-.mname{font-size:13px;font-weight:700;color:white}
+.mtab{
+  display:flex;align-items:center;gap:12px;padding:14px 16px;
+  border-radius:12px;cursor:pointer;
+  background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.07);
+  transition:all .3s;
+}
+.mtab:hover{border-color:rgba(212,120,138,.4)}
+.mtab.active{background:var(--grad2);border-color:transparent}
+.mnum{width:30px;height:30px;min-width:30px;border-radius:50%;background:rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:white}
+.mname{font-size:13px;font-weight:700;color:#1A1A1A}
 .mdet{display:none}
 .mdet.active{display:block;animation:fu .3s ease}
 .mcard{border-radius:20px;padding:30px 26px;position:relative;overflow:hidden}
-.mcard::before{content:'';position:absolute;width:180px;height:180px;border-radius:50%;top:-45px;right:-45px;opacity:.1}
-.mc0{background:rgba(74,108,247,.08);border:1px solid rgba(74,108,247,.2)}
-.mc0::before{background:var(--bl)}
-.mc1{background:rgba(232,113,74,.08);border:1px solid rgba(232,113,74,.2)}
-.mc1::before{background:var(--o)}
-.mc2{background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.2)}
-.mc2::before{background:var(--gr)}
-.mct{font-size:22px;font-weight:800;color:white;letter-spacing:-1px;margin-bottom:4px;position:relative;z-index:1}
+.mcard::before{content:'';position:absolute;width:180px;height:180px;border-radius:50%;top:-45px;right:-45px;opacity:.12}
+.mc0{background:rgba(126,184,212,.08);border:1px solid rgba(126,184,212,.2)}
+.mc0::before{background:var(--blue2)}
+.mc1{background:rgba(212,120,138,.08);border:1px solid rgba(212,120,138,.2)}
+.mc1::before{background:var(--pink)}
+.mc2{background:rgba(61,171,142,.08);border:1px solid rgba(61,171,142,.2)}
+.mc2::before{background:var(--acc-green)}
+.mct{font-size:22px;font-weight:800;color:#1A1A1A;letter-spacing:-1px;margin-bottom:4px;position:relative;z-index:1}
 .mcs{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;position:relative;z-index:1}
-.mcd{font-size:12px;color:var(--lt);line-height:1.7;margin-bottom:18px;position:relative;z-index:1}
+.mcd{font-size:12px;color:#555;line-height:1.7;margin-bottom:18px;position:relative;z-index:1}
 .mcf{display:flex;flex-direction:column;gap:7px;position:relative;z-index:1}
-.mcfi{display:flex;align-items:flex-start;gap:8px;font-size:11px;color:rgba(255,255,255,.7)}
+.mcfi{display:flex;align-items:flex-start;gap:8px;font-size:11px;color:#555}
 .fdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:3px}
 .tools-row{display:flex;flex-direction:column;gap:7px;margin-top:16px;position:relative;z-index:1}
-.tool-pill{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:8px;font-size:11px;color:rgba(255,255,255,.7)}
+.tool-pill{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(0,0,0,.06);border-radius:8px;font-size:11px;color:#444}
 .tool-badge{font-size:8px;font-weight:700;padding:2px 7px;border-radius:100px;margin-left:auto}
 .int-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px;position:relative;z-index:1}
-.int-b{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:4px 10px;font-size:10px;color:var(--mid)}
+.int-b{background:rgba(0,0,0,.05);border:1px solid rgba(0,0,0,.08);border-radius:7px;padding:4px 10px;font-size:10px;color:#777}
+.sec-row{display:flex;gap:8px;margin-top:12px;position:relative;z-index:1}
+.sec-b{display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:8px;background:rgba(61,171,142,.12);border:1px solid rgba(61,171,142,.25);font-size:9px;font-weight:700;color:#6EE7B7}
 
-/* ── SPICED ── */
-.spiced-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px}
-.sp-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:20px 18px;transition:all .3s;cursor:default;position:relative;overflow:hidden}
-.sp-card:hover{transform:translateY(-2px);border-color:rgba(232,113,74,.25)}
-.sp-letter{font-size:48px;font-weight:800;color:rgba(232,113,74,.12);position:absolute;top:-8px;right:12px;line-height:1;letter-spacing:-2px}
-.sp-title{font-size:14px;font-weight:700;color:white;margin-bottom:5px;position:relative;z-index:1}
-.sp-sub{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--o);margin-bottom:10px;position:relative;z-index:1}
-.sp-desc{font-size:11px;color:var(--mid);line-height:1.5;position:relative;z-index:1}
-.sp-outcome{margin-top:10px;padding:7px 10px;background:rgba(232,113,74,.08);border:1px solid rgba(232,113,74,.15);border-radius:8px;font-size:10px;color:var(--ol);position:relative;z-index:1}
+/* 
+   SLIDE 5 — SPICED
+ */
+.spiced-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
+.sp-card{
+  background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.07);
+  border-radius:16px;padding:20px 18px;transition:all .3s;cursor:default;
+  position:relative;overflow:hidden;
+}
+.sp-card:hover{transform:translateY(-2px);border-color:rgba(212,120,138,.25)}
+.sp-letter{
+  font-size:52px;font-weight:800;
+  position:absolute;top:-8px;right:12px;line-height:1;letter-spacing:-2px;
+  background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  opacity:.18;
+}
+.sp-title{font-size:14px;font-weight:700;color:#1A1A1A;margin-bottom:5px;position:relative;z-index:1}
+.sp-sub{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px;position:relative;z-index:1;display:inline-block}
+.sp-desc{font-size:11px;color:#777;line-height:1.5;position:relative;z-index:1}
+.sp-outcome{
+  margin-top:10px;padding:7px 10px;
+  background:rgba(212,120,138,.08);border:1px solid rgba(212,120,138,.18);
+  border-radius:8px;font-size:10px;color:rgba(180,90,50,.9);
+  position:relative;z-index:1;
+}
 
-/* ── ICP ── */
+/* 
+   SLIDE 6 — ICP
+ */
 .tier-sel{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
-.tbtn{padding:8px 20px;border-radius:100px;border:1.5px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.4);font-weight:700;font-size:11px;cursor:pointer;transition:all .3s;font-family:'Trebuchet MS','Segoe UI',Arial,sans-serif}
-.tbtn:hover{border-color:rgba(255,255,255,.25);color:white}
-.tbtn.active{background:var(--o);border-color:var(--o);color:white}
-.tbtn.t2.active{background:var(--bl);border-color:var(--bl)}
-.tbtn.t3.active{background:var(--gr);border-color:var(--gr)}
+.tbtn{
+  padding:8px 20px;border-radius:100px;
+  border:1.5px solid rgba(0,0,0,.12);
+  background:transparent;color:rgba(0,0,0,.45);
+  font-weight:700;font-size:11px;cursor:pointer;transition:all .3s;
+  font-family:'DM Sans',sans-serif;
+}
+.tbtn:hover{border-color:rgba(0,0,0,.3);color:#1A1A1A}
+.tbtn.t1.active{background:var(--grad2);border-color:transparent;color:white}
+.tbtn.t2.active{background:linear-gradient(135deg,var(--blue2),var(--blue));border-color:transparent;color:white}
+.tbtn.t3.active{background:linear-gradient(135deg,var(--acc-green),#2D8A70);border-color:transparent;color:white}
 .tpanel{display:none}
 .tpanel.active{display:grid;grid-template-columns:1fr 1fr;gap:16px;animation:fu .3s ease}
 .tm{border-radius:20px;padding:24px 20px;position:relative;overflow:hidden}
-.tm::before{content:'';position:absolute;width:140px;height:140px;border-radius:50%;top:-35px;right:-35px;opacity:.1}
-.tm0{background:rgba(232,113,74,.08);border:1px solid rgba(232,113,74,.2)}
-.tm0::before{background:var(--o)}
-.tm1{background:rgba(74,108,247,.08);border:1px solid rgba(74,108,247,.2)}
-.tm1::before{background:var(--bl)}
-.tm2{background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.2)}
-.tm2::before{background:var(--gr)}
+.tm::before{content:'';position:absolute;width:140px;height:140px;border-radius:50%;top:-35px;right:-35px;opacity:.12}
+.tm0{background:rgba(212,120,138,.08);border:1px solid rgba(212,120,138,.2)}
+.tm0::before{background:var(--pink)}
+.tm1{background:rgba(126,184,212,.08);border:1px solid rgba(126,184,212,.2)}
+.tm1::before{background:var(--blue2)}
+.tm2{background:rgba(61,171,142,.08);border:1px solid rgba(61,171,142,.2)}
+.tm2::before{background:var(--acc-green)}
 .tbadge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:100px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;position:relative;z-index:1}
 .tacv{font-size:36px;font-weight:800;letter-spacing:-2px;line-height:1;margin-bottom:3px;position:relative;z-index:1}
-.tacvl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.3);margin-bottom:16px;position:relative;z-index:1}
+.tacvl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:rgba(0,0,0,.4);margin-bottom:16px;position:relative;z-index:1}
 .tstats{display:flex;flex-direction:column;gap:7px;position:relative;z-index:1}
-.tst{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:7px;background:rgba(0,0,0,.2)}
-.tsk{font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px}
-.tsv{font-size:11px;font-weight:700;color:white}
-.twhy{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:20px 18px}
-.twhy h4{font-size:13px;font-weight:700;color:white;margin-bottom:12px}
-.wi{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.tst{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:7px;background:rgba(0,0,0,.05)}
+.tsk{font-size:9px;color:rgba(0,0,0,.45);text-transform:uppercase;letter-spacing:1px}
+.tsv{font-size:11px;font-weight:700;color:#1A1A1A}
+.twhy{background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.07);border-radius:20px;padding:20px 18px}
+.twhy h4{font-size:13px;font-weight:700;color:#1A1A1A;margin-bottom:12px}
+.wi{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.06)}
 .wi:last-child{border-bottom:none;padding-bottom:0}
 .wd{width:5px;height:5px;border-radius:50%;margin-top:5px;flex-shrink:0}
-.wt{font-size:11px;color:rgba(255,255,255,.5);line-height:1.5}
-.wt strong{color:rgba(255,255,255,.8);font-weight:600}
+.wt{font-size:11px;color:#777;line-height:1.5}
+.wt strong{color:#1A1A1A;font-weight:600}
 
-/* ── STRATEGY ── */
+/* 
+   SLIDE 7 — STRATEGY 2026
+ */
 .strat-layout{display:grid;grid-template-columns:1fr 1.6fr;gap:18px;margin-top:22px}
-.bmet{background:linear-gradient(135deg,var(--o),var(--od));border-radius:20px;padding:26px 22px;position:relative;overflow:hidden}
-.bmet::before{content:'';position:absolute;width:160px;height:160px;background:rgba(255,255,255,.08);border-radius:50%;top:-45px;right:-45px}
+.bmet{background:var(--grad);border-radius:20px;padding:26px 22px;position:relative;overflow:hidden}
+.bmet::before{content:'';position:absolute;width:160px;height:160px;background:rgba(255,255,255,.1);border-radius:50%;top:-45px;right:-45px}
 .bnum{font-size:46px;font-weight:800;color:white;letter-spacing:-3px;line-height:1;position:relative;z-index:1}
-.blbl{font-size:12px;color:rgba(255,255,255,.7);margin-top:5px;position:relative;z-index:1}
-.bgrow{margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.2);font-size:11px;color:rgba(255,255,255,.6);position:relative;z-index:1}
+.blbl{font-size:12px;color:rgba(255,255,255,.75);margin-top:5px;position:relative;z-index:1}
+.bgrow{margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.35);font-size:11px;color:rgba(255,255,255,.85);position:relative;z-index:1}
 .bgrow strong{color:white}
-.geo-c{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:20px 20px}
-.geo-c h3{font-size:13px;font-weight:700;color:white;margin-bottom:14px}
-.geo-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);transition:transform .2s;cursor:default}
+.geo-c{background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.07);border-radius:20px;padding:20px 20px}
+.geo-c h3{font-size:13px;font-weight:700;color:#1A1A1A;margin-bottom:14px}
+.geo-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(0,0,0,.06);transition:transform .2s;cursor:default}
 .geo-row:last-child{border-bottom:none}
 .geo-row:hover{transform:translateX(3px)}
 .gdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.gn{font-size:12px;font-weight:700;color:white;flex:1}
-.gnote{font-size:10px;color:var(--mid)}
-.gbadge{font-size:8px;font-weight:700;padding:2px 8px;border-radius:100px;background:var(--o);color:white}
+.gn{font-size:12px;font-weight:700;color:#1A1A1A;flex:1}
+.gnote{font-size:10px;color:#888}
+.gbadge{font-size:8px;font-weight:700;padding:2px 8px;border-radius:100px;background:var(--grad2);color:white}
 .kpi3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
-.kpi-c{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:13px 15px;display:flex;gap:10px;align-items:center}
-.kpi-n{font-size:24px;font-weight:800;color:var(--o);letter-spacing:-1px}
-.kpi-l{font-size:10px;color:var(--mid)}
+.kpi-c{background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.07);border-radius:12px;padding:13px 15px;display:flex;gap:10px;align-items:center}
+.kpi-n{font-size:24px;font-weight:800;letter-spacing:-1px;background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.kpi-l{font-size:10px;color:#777}
 
-/* ── TOOLS OPS ── */
+/* 
+   SLIDE 8 — TOOLS & OPS
+ */
 .tools-ops-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:20px}
-.toc{background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.07);border-radius:16px;padding:20px 18px;display:flex;gap:14px;transition:all .3s;cursor:default}
-.toc:hover{border-color:var(--o);transform:translateY(-2px)}
+.toc{background:rgba(255,255,255,.7);border:1.5px solid rgba(0,0,0,.07);border-radius:16px;padding:20px 18px;display:flex;gap:14px;transition:all .3s;cursor:default}
+.toc:hover{border-color:rgba(212,120,138,.35);transform:translateY(-2px)}
 .tic{width:44px;height:44px;min-width:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:white}
-.toc h4{font-size:13px;font-weight:700;color:white;margin-bottom:3px}
+.toc h4{font-size:13px;font-weight:700;color:#1A1A1A;margin-bottom:3px}
 .ttag{display:inline-block;font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:2px 8px;border-radius:100px;margin-bottom:6px}
-.treq{background:rgba(232,113,74,.15);color:var(--ol)}
-.trec{background:rgba(123,92,240,.15);color:#A78BFA}
-.tdd{font-size:11px;color:var(--mid);line-height:1.5}
+.treq{background:rgba(212,120,138,.15);color:rgba(180,90,50,.9)}
+.trec{background:rgba(139,114,212,.15);color:#A78BFA}
+.tdd{font-size:11px;color:#777;line-height:1.5}
 
-/* ── WAY OF WORKING ── */
+/* 
+   SLIDE 9 — WAY OF WORKING
+ */
 .wow-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;margin-top:20px}
-.mcol{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:20px 18px}
-.mcol h3{font-size:12px;font-weight:700;color:white;margin-bottom:13px}
-.mrow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);transition:transform .2s;cursor:default}
+.mcol{background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.07);border-radius:16px;padding:20px 18px}
+.mcol h3{font-size:12px;font-weight:700;color:#1A1A1A;margin-bottom:13px}
+.mrow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(0,0,0,.06);transition:transform .2s;cursor:default}
 .mrow:last-child{border-bottom:none}
 .mrow:hover{transform:translateX(3px)}
 .fpill{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:3px 7px;border-radius:100px;white-space:nowrap}
-.minfo h5{font-size:11px;font-weight:700;color:white}
-.minfo p{font-size:9px;color:var(--mid);margin-top:1px}
+.minfo h5{font-size:11px;font-weight:700;color:#1A1A1A}
+.minfo p{font-size:9px;color:#888;margin-top:1px}
 .rules-col{display:flex;flex-direction:column;gap:6px}
-.rpill{background:rgba(255,255,255,.04);border-radius:10px;padding:11px 13px;display:flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.06);transition:all .22s;cursor:default}
-.rpill:hover{border-color:rgba(232,113,74,.28);transform:translateX(3px)}
+.rpill{background:rgba(255,255,255,.65);border-radius:10px;padding:11px 13px;display:flex;align-items:center;gap:8px;border:1px solid rgba(0,0,0,.07);transition:all .22s;cursor:default}
+.rpill:hover{border-color:rgba(212,120,138,.28);transform:translateX(3px)}
 .rbar{width:3px;height:22px;border-radius:2px;flex-shrink:0}
-.rtext{font-size:11px;color:rgba(255,255,255,.6);line-height:1.4}
-.rtext strong{color:white;font-weight:700}
+.rtext{font-size:11px;color:#555;line-height:1.4}
+.rtext strong{color:#1A1A1A;font-weight:700}
 
-/* ── OBJECTIONS ── */
-.obj-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:22px}
-.obj-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:20px 18px;transition:all .3s;cursor:default}
-.obj-card:hover{border-color:rgba(232,113,74,.25);transform:translateY(-2px)}
-.obj-q{font-size:13px;font-weight:700;color:var(--o);margin-bottom:10px;display:flex;align-items:flex-start;gap:8px}
-.obj-q::before{content:'"';font-size:20px;color:rgba(232,113,74,.4);line-height:1;flex-shrink:0}
-.obj-a{font-size:11px;color:rgba(255,255,255,.6);line-height:1.6}
-.obj-a strong{color:rgba(255,255,255,.85);font-weight:600}
+/* 
+   SLIDE 10 — OBJECTIONS
+ */
+.obj-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:20px}
+.obj-card{background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.07);border-radius:16px;padding:20px 18px;transition:all .3s;cursor:default}
+.obj-card:hover{border-color:rgba(212,120,138,.25);transform:translateY(-2px)}
+.obj-q{font-size:13px;font-weight:700;color:rgba(180,90,50,.9);margin-bottom:10px;display:flex;align-items:flex-start;gap:8px}
+.obj-q::before{content:'"';font-size:20px;color:rgba(212,120,138,.4);line-height:1;flex-shrink:0}
+.obj-a{font-size:11px;color:#555;line-height:1.6}
+.obj-a strong{color:#1A1A1A;font-weight:600}
 
-/* ── WHY IT MATTERS ── */
+/* 
+   SLIDE 11 — WHY IT MATTERS
+ */
 .why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
-.why-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:20px 18px;transition:all .3s;cursor:default}
-.why-card:hover{border-color:rgba(232,113,74,.25);transform:translateY(-2px)}
-.why-stat{font-size:32px;font-weight:800;color:var(--o);letter-spacing:-2px;line-height:1;margin-bottom:6px}
-.why-lbl{font-size:12px;font-weight:700;color:white;margin-bottom:5px}
-.why-desc{font-size:11px;color:var(--mid);line-height:1.5}
+.why-card{background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.07);border-radius:16px;padding:20px 18px;transition:all .3s;cursor:default}
+.why-card:hover{border-color:rgba(212,120,138,.25);transform:translateY(-2px)}
+.why-stat{font-size:32px;font-weight:800;letter-spacing:-2px;line-height:1;margin-bottom:6px;background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.why-lbl{font-size:12px;font-weight:700;color:#1A1A1A;margin-bottom:5px}
+.why-desc{font-size:11px;color:#777;line-height:1.5}
 .vs-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.vs-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px 16px}
+.vs-card{background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.07);border-radius:14px;padding:18px 16px}
 .vs-card h4{font-size:12px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.vs-item{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:11px;color:rgba(255,255,255,.55)}
+.vs-item{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid rgba(0,0,0,.06);font-size:11px;color:#666}
 .vs-item:last-child{border-bottom:none}
 .vs-dot{width:6px;height:6px;border-radius:50%;margin-top:4px;flex-shrink:0}
 
-/* ── CLOSING ── */
+/* 
+   SLIDE 12 — LEARN NEXT
+ */
+
+/* 
+   SLIDE 13 — CLOSING
+ */
 .close-ring{position:absolute;border-radius:50%;pointer-events:none}
 .close-content{text-align:center;position:relative;z-index:2;max-width:620px}
-.close-title{font-size:clamp(38px,5.5vw,72px);font-weight:800;color:white;letter-spacing:-3px;line-height:1.05;margin-bottom:16px}
-.close-title span{color:var(--o)}
-.close-sub{font-size:14px;color:rgba(255,255,255,.35);margin-bottom:28px;line-height:1.6}
+.close-title{font-size:clamp(38px,5.5vw,72px);font-weight:800;color:#1A1A1A;letter-spacing:-3px;line-height:1.05;margin-bottom:16px}
+.close-title .cg{background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.close-sub{font-size:14px;color:rgba(0,0,0,.45);margin-bottom:28px;line-height:1.6}
 .close-pills{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:32px}
-.cpill2{padding:8px 18px;border-radius:100px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);font-size:11px;color:rgba(255,255,255,.5);font-weight:600}
-.restart{display:inline-flex;align-items:center;gap:8px;background:var(--o);color:white;font-weight:700;font-size:13px;padding:12px 26px;border-radius:100px;cursor:pointer;border:none;transition:transform .2s,box-shadow .2s;animation:pulse 2.5s ease infinite;font-family:'Trebuchet MS','Segoe UI',Arial,sans-serif}
-.restart:hover{transform:translateY(-2px);box-shadow:0 16px 32px rgba(232,113,74,.3)}
+.cpill2{padding:8px 18px;border-radius:100px;border:1px solid rgba(0,0,0,.1);background:rgba(255,255,255,.6);font-size:11px;color:rgba(0,0,0,.5);font-weight:600}
+.restart{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--grad2);color:white;
+  font-weight:700;font-size:13px;padding:12px 26px;border-radius:100px;
+  cursor:pointer;border:none;
+  transition:transform .2s,box-shadow .2s;
+  animation:pulse 2.5s ease infinite;
+  font-family:'DM Sans',sans-serif;
+}
+.restart:hover{transform:translateY(-2px);box-shadow:0 16px 32px rgba(212,120,138,.3)}
 
-/* SECURITY BADGES */
-.sec-row{display:flex;gap:8px;margin-top:12px;position:relative;z-index:1}
-.sec-b{display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:8px;background:rgba(5,150,105,.12);border:1px solid rgba(5,150,105,.25);font-size:9px;font-weight:700;color:#6EE7B7}
+/* VIDEO BUTTON */
+.vid-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  margin-top:10px;
+  padding:7px 14px;border-radius:100px;
+  background:rgba(0,0,0,.07);
+  border:1px solid rgba(0,0,0,.1);
+  font-size:10px;font-weight:700;color:#333;
+  cursor:pointer;text-decoration:none;
+  transition:all .2s;font-family:'DM Sans',sans-serif;
+}
+.vid-btn:hover{background:var(--grad2);color:white;border-color:transparent;transform:translateY(-1px)}
+.vid-btn .play{width:18px;height:18px;border-radius:50%;background:var(--grad2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.vid-btn .play svg{width:7px;height:7px;fill:white;margin-left:1px}
+.vid-btn:hover .play{background:rgba(255,255,255,.3)}
+
+/* VIDEO MODAL */
+.vmodal{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.vmodal.open{display:flex;animation:fu .25s ease}
+.vmodal-inner{position:relative;width:min(880px,92vw);aspect-ratio:16/9;border-radius:16px;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,.5)}
+.vmodal iframe{width:100%;height:100%;border:none}
+.vclose{position:absolute;top:-14px;right:-14px;width:32px;height:32px;border-radius:50%;background:white;border:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:10;transition:transform .2s}
+.vclose:hover{transform:scale(1.1)}
+
 </style>
 </head>
 <body>
 
+<div class="bg-canvas"></div>
 <div class="prog" id="prog"></div>
 <div class="kh">← → navigate</div>
 
 <div class="sw" id="sw">
 
-<!-- S1: COVER -->
+<!-- 
+     S1 · COVER
+ -->
 <div class="slide active" id="slide-0">
-  <div class="orb" style="width:550px;height:550px;background:radial-gradient(circle,rgba(232,113,74,.15) 0%,transparent 70%);top:-140px;right:-80px;animation:fl 8s ease-in-out infinite"></div>
-  <div class="orb" style="width:340px;height:340px;background:radial-gradient(circle,rgba(74,108,247,.09) 0%,transparent 70%);bottom:-90px;left:-60px;animation:fl 11s ease-in-out infinite reverse"></div>
-  <div class="orb" style="width:160px;height:160px;border:1px solid rgba(232,113,74,.1);top:48px;right:180px;animation:sp 22s linear infinite"></div>
-  <div class="cover-wrap">
-    <div class="logo-row"><div class="logo-c">U</div><div class="logo-n">uman</div></div>
-    <div class="ctag">Employee Onboarding · 2026</div>
-    <h1 class="ctitle">Everything you need<br>to know about<br><span>Uman.ai.</span></h1>
-    <p class="csub">Your complete guide to the company, the product, the team, how we sell, and how we work together.</p>
-    <button class="cpill" onclick="nextSlide()">Let's get started <div class="arr">→</div></button>
+  <div class="cover-slide" style="position:absolute;inset:0">
+    <div class="cover-grad"></div>
+    <!-- Big U filigrane -->
+    <div class="cover-u-mark">U</div>
+    <!-- Floating orbs -->
+    <div class="orb" style="width:300px;height:300px;background:radial-gradient(circle,rgba(126,184,212,.22) 0%,transparent 70%);top:-80px;left:30px;animation:fl 9s ease-in-out infinite"></div>
+    <div class="orb" style="width:200px;height:200px;background:radial-gradient(circle,rgba(212,120,138,.18) 0%,transparent 70%);bottom:60px;left:200px;animation:fl 12s ease-in-out infinite reverse"></div>
+    <div class="orb" style="width:150px;height:150px;border:1px solid rgba(232,160,122,.12);top:60px;left:350px;animation:sp 24s linear infinite"></div>
+
+    <div class="cover-wrap">
+      <div class="logo-row">
+        <div class="logo-c">U</div>
+        <div class="logo-n">uman</div>
+      </div>
+      <div class="ctag">Employee Onboarding · 2026</div>
+      <h1 class="ctitle">Everything you need<br>to know about<br><span class="cg">Uman.ai.</span></h1>
+      <p class="csub">Your complete guide to the company, the product, the team, how we sell, and how we work together.</p>
+      <button class="cpill" onclick="nextSlide()">Let's get started <div class="arr">→</div></button>
+    </div>
+
+    <!-- Trust strip -->
+    <div class="trust-strip">
+      <span class="trust-label">Trusted by</span>
+      <div class="trust-logos">
+        <div class="trust-logo">Proximus</div>
+        <div class="trust-logo">Randstad</div>
+        <div class="trust-logo">KPMG</div>
+        <div class="trust-logo">DPG Media</div>
+        <div class="trust-logo">Akkodis</div>
+        <div class="trust-logo">msg global</div>
+        <div class="trust-logo">Plat4mation</div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- S2: WHO WE ARE -->
+<!-- 
+     S2 · WHO WE ARE
+ -->
 <div class="slide" id="slide-1">
-  <div class="orb" style="width:420px;height:420px;background:radial-gradient(circle,rgba(232,113,74,.11) 0%,transparent 70%);top:-90px;right:-50px"></div>
+  <div class="orb" style="width:420px;height:420px;background:radial-gradient(circle,rgba(126,184,212,.25) 0%,transparent 70%);top:-90px;right:-50px"></div>
   <div class="in">
     <div class="lbl">Part 1 · Company</div>
-    <h2 class="h1">Who is <span>Uman.ai?</span></h2>
+    <h2 class="h1">Who is <span class="g">Uman.ai?</span></h2>
     <div class="stats3">
       <div class="stat-c"><div class="stat-n">~20</div><div class="stat-l">People in the team<br>You have a real place here</div></div>
-      <div class="stat-c"><div class="stat-n">58%</div><div class="stat-l">ARR growth in 2025<br>€500k → €788k</div></div>
-      <div class="stat-c"><div class="stat-n">€2M+</div><div class="stat-l">ARR target 2026<br>100%+ growth on track</div></div>
+      <div class="stat-c"><div class="stat-n">€788k</div><div class="stat-l">ARR contracted in 2025<br>Growing fast toward €2.5M</div></div>
+      <div class="stat-c"><div class="stat-n">€2.5M</div><div class="stat-l">ARR target 2026<br>~200%+ growth ambition</div></div>
     </div>
     <div class="tbar">
       <p>"Prep like a machine, sell like a human"</p>
-      <span>AI-powered platform helping complex B2B sales teams prepare smarter, sell with confidence, and win more deals</span>
+      <span>All-in-one AI platform for solution selling — helping complex B2B sales teams prepare smarter, sell with confidence, and win more deals</span>
     </div>
     <div class="ibox">
-      Uman.ai is a <strong>Belgian B2B SaaS startup based in Ghent</strong>, founded in 2022. We build AI tools for sales teams — helping salespeople prepare meetings, find prospects, and manage clients without wasting hours on manual research. The team is small enough that <strong>your work is visible immediately</strong>. We're growing fast and every person on the team contributes directly to that growth. The platform is <strong>ISO 27001 certified and GDPR compliant</strong>.
+      Uman.ai is a <strong>Belgian B2B SaaS startup based in Ghent</strong>, founded in 2022. We build AI tools for sales teams — helping salespeople prepare meetings, find prospects, and manage clients without wasting hours on manual research. The team is small enough that <strong>your work is visible immediately</strong>. We're growing fast and every person on the team contributes directly to that growth. The platform is <strong>ISO 27001 certified and GDPR compliant</strong>. Mission: help B2B sales teams reach a new standard of productivity through <strong>simplicity, effectiveness and the human touch</strong>.
     </div>
   </div>
 </div>
 
-<!-- S3: TEAM -->
+<!-- 
+     S3 · TEAM
+ -->
 <div class="slide" id="slide-2">
-  <div class="orb" style="width:380px;height:380px;background:radial-gradient(circle,rgba(232,113,74,.1) 0%,transparent 70%);top:-80px;right:-40px"></div>
+  <div class="orb" style="width:380px;height:380px;background:radial-gradient(circle,rgba(212,120,138,.2) 0%,transparent 70%);top:-80px;right:-40px"></div>
   <div class="in">
     <div class="lbl">Part 1 · People</div>
-    <h2 class="h1">Meet the <span>Team</span></h2>
-    <p style="font-size:11px;color:var(--mid);margin-top:-16px;margin-bottom:16px">Hover over a card to learn more about each person</p>
+    <h2 class="h1">Meet the <span class="g">Team</span></h2>
+    <p style="font-size:11px;color:#888;margin-top:-16px;margin-bottom:16px">Hover over a card to learn more about each person</p>
     <div class="tgrid">
 
       <div class="tcard">
-        <div class="av" style="background:#222;border:2px solid rgba(255,255,255,.15)">C</div>
-        <div class="tn">Charles</div><div class="tr" style="color:rgba(255,255,255,.3)">CEO</div><div class="td">Vision & leadership</div>
-        <div class="hpop"><h4>Charles — CEO</h4><p>Founder and visionary behind uman. Defines the overall strategic direction and drives the company forward.</p><div class="ht">Key figure for big product and business decisions.</div></div>
+        <div class="av av-dark">S</div>
+        <div class="tn">Sven</div><div class="tr" style="color:rgba(255,255,255,.3)">CEO</div><div class="td">Vision & leadership</div>
+        <div class="hpop"><h4>Sven — CEO</h4><p>Founder and CEO of uman. Defines the overall strategic direction, drives the company forward and also doubles as CTO.</p><div class="ht">Key figure for big product and business decisions.</div></div>
       </div>
 
       <div class="tcard">
-        <div class="av" style="background:var(--o)">S</div>
-        <div class="tn">Sam</div><div class="tr" style="color:var(--o)">CCO</div><div class="td">Commercial lead</div>
-        <div class="hpop"><h4>Sam — CCO</h4><p>Chief Commercial Officer. Oversees the entire commercial side of uman — sales strategy, team management, and international expansion including the Nordics.</p><div class="ht">Your main point of reference for anything commercial.</div></div>
+        <div class="av" style="background:linear-gradient(135deg,#D4724A,#E8A07A)">C</div>
+        <div class="tn">Charles</div><div class="tr" style="background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Head of Growth</div><div class="td">Product & Growth</div>
+        <div class="hpop"><h4>Charles — Head of Growth & Product Mgr</h4><p>Drives growth strategy and product management. Key bridge between commercial and product teams.</p><div class="ht">Go to him for product roadmap and growth initiatives.</div></div>
       </div>
 
       <div class="tcard">
-        <div class="av" style="background:var(--bl)">C</div>
-        <div class="tn">Carlo</div><div class="tr" style="color:var(--bl)">Growth Marketing</div><div class="td">Brand & campaigns</div>
+        <div class="av" style="background:linear-gradient(135deg,var(--pink2),var(--pink))">S</div>
+        <div class="tn">Sam</div><div class="tr" style="background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">CCO</div><div class="td">Commercial lead</div>
+        <div class="hpop"><h4>Sam — CCO</h4><p>Chief Commercial Officer. Oversees the entire commercial side — sales strategy, team management, and international expansion including the Nordics.</p><div class="ht">Your main point of reference for anything commercial.</div></div>
+      </div>
+
+      <div class="tcard">
+        <div class="av av-blue">C</div>
+        <div class="tn">Carlo</div><div class="tr" style="color:var(--blue)">Growth Marketing</div><div class="td">Brand & campaigns</div>
         <div class="hpop"><h4>Carlo — Growth Marketing</h4><p>Handles brand, content, campaigns, and ABM. Easy to work with, knows what he wants.</p><div class="ht">Go to him for anything marketing, content, or brand-related.</div></div>
       </div>
 
       <div class="tcard">
-        <div class="av" style="background:var(--gr)">C</div>
-        <div class="tn">Charlotte</div><div class="tr" style="color:var(--gr)">Customer Success</div><div class="td">Onboarding & retention</div>
-        <div class="hpop"><h4>Charlotte — Customer Success</h4><p>Head of CS. Manages client onboarding, QBRs, adoption, and retention across all accounts.</p><div class="ht">Talk to her to understand how uman is experienced from the client side.</div></div>
+        <div class="av av-green">C</div>
+        <div class="tn">Charlotte</div><div class="tr" style="color:var(--acc-green)">Customer Success</div><div class="td">Onboarding & retention</div>
+        <div class="hpop"><h4>Charlotte — Head of CS</h4><p>Manages client onboarding, QBRs, adoption, and retention across all accounts.</p><div class="ht">Talk to her to understand how uman is experienced from the client side.</div></div>
       </div>
 
       <div class="tcard">
-        <div class="av" style="background:var(--o)">G</div>
-        <div class="tn">Gilles</div><div class="tr" style="color:var(--o)">AE · Tier 1</div><div class="td">Account Executive</div>
+        <div class="av" style="background:linear-gradient(135deg,var(--orange2),var(--orange))">G</div>
+        <div class="tn">Gilles</div><div class="tr" style="color:var(--orange)">AE · Tier 1</div><div class="td">Account Executive</div>
         <div class="hpop"><h4>Gilles — AE Tier 1 POD</h4><p>Account Executive on the top segment. Manages deals with the biggest accounts, leads demos and negotiations.</p><div class="ht">Shadow one of his demos to see uman in a real commercial context.</div></div>
       </div>
 
       <div class="tcard">
-        <div class="av" style="background:#C45A32">T</div>
-        <div class="tn">Thomas</div><div class="tr" style="color:var(--o)">SDR · Tier 1</div><div class="td">Sales Dev Rep</div>
-        <div class="hpop"><h4>Thomas — SDR Tier 1 POD</h4><p>Handles prospecting and lead generation on the Tier 1 segment. Fills Gilles' pipeline through outbound activity.</p><div class="ht">Best person to understand outbound prospecting at uman.</div></div>
+        <div class="av" style="background:linear-gradient(135deg,#C45A6E,#D4788A)">E</div>
+        <div class="tn">Elena</div><div class="tr" style="color:var(--pink)">AE · Tier 2</div><div class="td">Account Executive</div>
+        <div class="hpop"><h4>Elena — AE Tier 2 POD</h4><p>Account Executive on the mid-market segment. Manages deals and relationships in the Tier 2 space.</p><div class="ht">Key player for the mid-market growth engine.</div></div>
       </div>
 
       <div class="tcard">
-        <div class="av" style="background:var(--pu)">E</div>
-        <div class="tn">Edgard</div><div class="tr" style="color:var(--pu)">SDR · Tier 2</div><div class="td">Sales Dev Rep</div>
+        <div class="av" style="background:linear-gradient(135deg,#7EB8D4,#5A9EC4)">T</div>
+        <div class="tn">Thomas</div><div class="tr" style="color:var(--blue)">SDR · Tier 1</div><div class="td">Sales Dev Rep</div>
+        <div class="hpop"><h4>Thomas — SDR Tier 1 POD</h4><p>Handles prospecting and lead generation on the Tier 1 segment. Fills the Tier 1 pipeline through outbound activity.</p><div class="ht">Best person to understand outbound prospecting at uman.</div></div>
+      </div>
+
+      <div class="tcard">
+        <div class="av av-purple">E</div>
+        <div class="tn">Edgard</div><div class="tr" style="color:var(--acc-purple)">SDR · Tier 2</div><div class="td">Sales Dev Rep</div>
         <div class="hpop"><h4>Edgard — SDR Tier 2 POD</h4><p>Same role as Thomas but on the mid-market segment. Prospects companies between €30M–€100M revenue.</p><div class="ht">The team is small — knowing everyone makes everything easier.</div></div>
       </div>
 
-      <div class="tcard" style="background:rgba(232,113,74,.06);border-color:rgba(232,113,74,.15)">
-        <div class="av" style="background:rgba(232,113,74,.2);border:2px dashed rgba(232,113,74,.4);font-size:20px">+</div>
-        <div class="tn" style="color:var(--ol)">Hiring</div><div class="tr" style="color:rgba(232,113,74,.5)">AE · Tier 2</div><div class="td">Coming soon</div>
-        <div class="hpop"><h4>AE Tier 2 — To Hire</h4><p>The Tier 2 POD is currently looking for an Account Executive to cover the mid-market segment.</p><div class="ht">The team is actively growing in 2026.</div></div>
+      <div class="tcard" style="background:rgba(212,120,138,.04);border-color:rgba(212,120,138,.12)">
+        <div class="av" style="background:rgba(212,120,138,.15);border:2px dashed rgba(212,120,138,.35);font-size:20px">+</div>
+        <div class="tn" style="color:rgba(232,160,122,.8)">CSM</div><div class="tr" style="color:rgba(212,120,138,.5)">CS Consultant</div><div class="td">Hiring now</div>
+        <div class="hpop"><h4>CSM / Consultant — To Hire</h4><p>The Customer Success team is currently looking for a CSM/Consultant to support client implementation and adoption.</p><div class="ht">The team is actively growing in 2026.</div></div>
       </div>
 
     </div>
   </div>
 </div>
 
-<!-- S4: PLATFORM OVERVIEW -->
+<!-- 
+     S4 · PLATFORM OVERVIEW
+ -->
 <div class="slide" id="slide-3">
-  <div class="orb" style="width:360px;height:360px;background:radial-gradient(circle,rgba(74,108,247,.1) 0%,transparent 70%);top:-70px;right:-30px"></div>
+  <div class="orb" style="width:360px;height:360px;background:radial-gradient(circle,rgba(126,184,212,.22) 0%,transparent 70%);top:-70px;right:-30px"></div>
   <div class="prod-layout">
     <div>
       <div class="lbl">Part 2 · Product</div>
-      <h2 class="h1" style="font-size:clamp(24px,2.8vw,36px);margin-bottom:16px">The Platform</h2>
+      <h2 class="h1" style="font-size:clamp(22px,2.6vw,34px);margin-bottom:16px">The Platform</h2>
       <div class="ibox" style="margin-bottom:16px;font-size:11px">
-        Uman is an <strong>all-in-one sales enablement brain</strong> that lives inside your mailbox or CRM. It knows your full service portfolio, pulls in all internal and external customer intelligence, and follows your sales methodology automatically — providing <strong>context-rich, consistent workflows</strong> your reps can use instantly. No prompt hacking. No copy-pasting.
+        Uman is an <strong>all-in-one AI platform for solution selling</strong>. It knows your full service portfolio, pulls in all internal and external customer intelligence, and follows your sales methodology automatically — providing <strong>context-rich, consistent workflows</strong> your reps can use instantly. No prompt hacking. No copy-pasting.
       </div>
       <div class="mtabs">
         <div class="mtab active" onclick="switchModule(0)"><div class="mnum">01</div><div class="mname">Business Development</div></div>
@@ -382,55 +706,55 @@ html,body{width:100%;height:100%;font-family:'Trebuchet MS','Segoe UI',Arial,san
         <div class="mtab" onclick="switchModule(2)"><div class="mnum">03</div><div class="mname">Account Management</div></div>
       </div>
       <div class="int-row" style="margin-top:14px">
-        <div class="int-b">HubSpot</div><div class="int-b">Salesforce</div><div class="int-b">SAP CRM</div><div class="int-b">Copilot</div>
+        <div class="int-b">HubSpot</div><div class="int-b">Salesforce</div><div class="int-b">SAP CRM</div><div class="int-b">Copilot</div><div class="int-b">Agentforce</div>
       </div>
     </div>
     <div>
       <div class="mdet active" id="module-0">
         <div class="mcard mc0">
           <div class="mct">Business Development</div>
-          <div class="mcs" style="color:var(--bl)">Prospect · Signal Opportunities · Outreach</div>
+          <div class="mcs" style="color:var(--blue)">Prospect · Signal Opportunities · Outreach</div>
           <div class="mcd">Research target accounts, identify new opportunities, find relevant stakeholders with contact details, and generate personalized outreach messages designed to convert. Goal: <strong style="color:white">double your qualified meetings</strong> while spending 70% less time on research.</div>
           <div class="tools-row">
-            <div class="tool-pill"><span>🔍</span> Prospect<span class="tool-badge" style="background:rgba(74,108,247,.2);color:#8BA3FF">Find & target accounts</span></div>
-            <div class="tool-pill"><span>⚡</span> Signal Opportunities<span class="tool-badge" style="background:rgba(74,108,247,.2);color:#8BA3FF">Spot the right moment</span></div>
-            <div class="tool-pill"><span>📨</span> Outreach<span class="tool-badge" style="background:rgba(74,108,247,.2);color:#8BA3FF">Personalized contact</span></div>
+            <div class="tool-pill"><span></span> Prospect<span class="tool-badge" style="background:rgba(126,184,212,.2);color:#9FD0E8">Find & target accounts</span></div>
+            <div class="tool-pill"><span></span> Signal Opportunities<span class="tool-badge" style="background:rgba(126,184,212,.2);color:#9FD0E8">Spot the right moment</span></div>
+            <div class="tool-pill"><span></span> Outreach<span class="tool-badge" style="background:rgba(126,184,212,.2);color:#9FD0E8">Personalized contact</span></div>
           </div>
           <div class="sec-row">
-            <div class="sec-b">✓ ISO 27001</div>
-            <div class="sec-b">✓ GDPR Compliant</div>
+            <div class="sec-b"> ISO 27001</div>
+            <div class="sec-b"> GDPR Compliant</div>
           </div>
         </div>
       </div>
       <div class="mdet" id="module-1">
         <div class="mcard mc1">
           <div class="mct">Deal Execution</div>
-          <div class="mcs" style="color:var(--o)">Sales Meeting · Deals</div>
+          <div class="mcs" style="color:var(--pink)">Sales Meeting · Deals · SPICED Qualification</div>
           <div class="mcd">Automates sales meeting preparation. Generates tailored value propositions, performs deal qualification and gap analysis, takes notes, updates the CRM, and prepares follow-up communications. <strong style="color:white">Speeds up prep and follow-up by 3x.</strong></div>
           <div class="tools-row">
-            <div class="tool-pill"><span>🤝</span> Sales Meeting<span class="tool-badge" style="background:rgba(232,113,74,.2);color:var(--ol)">Prep, notes, follow-up</span></div>
-            <div class="tool-pill"><span>💼</span> Deals<span class="tool-badge" style="background:rgba(232,113,74,.2);color:var(--ol)">Track negotiations</span></div>
+            <div class="tool-pill"><span></span> Sales Meeting<span class="tool-badge" style="background:rgba(212,120,138,.2);color:#E8A0B0">Prep, notes, follow-up</span></div>
+            <div class="tool-pill"><span></span> Deals<span class="tool-badge" style="background:rgba(212,120,138,.2);color:#E8A0B0">Track negotiations</span></div>
           </div>
           <div class="mcf" style="margin-top:14px">
-            <div class="mcfi"><div class="fdot" style="background:var(--o)"></div>Connects to calendar — auto-prepares upcoming meetings</div>
-            <div class="mcfi"><div class="fdot" style="background:var(--o)"></div>AI deal qualification scoring and gap analysis</div>
-            <div class="mcfi"><div class="fdot" style="background:var(--o)"></div>CRM auto-update after every interaction</div>
+            <div class="mcfi"><div class="fdot" style="background:var(--pink)"></div>Connects to calendar — auto-prepares upcoming meetings</div>
+            <div class="mcfi"><div class="fdot" style="background:var(--pink)"></div>AI deal qualification scoring and gap analysis (SPICED)</div>
+            <div class="mcfi"><div class="fdot" style="background:var(--pink)"></div>CRM auto-update after every interaction</div>
           </div>
         </div>
       </div>
       <div class="mdet" id="module-2">
         <div class="mcard mc2">
           <div class="mct">Account Management</div>
-          <div class="mcs" style="color:var(--gr)">Customers · Portfolio</div>
+          <div class="mcs" style="color:var(--acc-green)">Customers · Portfolio · Cross-sell</div>
           <div class="mcd">Keeps all accounts on track by automatically consolidating updates, providing an intelligent news feed, monitoring account health, and preparing QBRs. <strong style="color:white">Wins back 90% of time</strong> spent manually tracking accounts.</div>
           <div class="tools-row">
-            <div class="tool-pill"><span>👥</span> Customers<span class="tool-badge" style="background:rgba(5,150,105,.2);color:#6EE7B7">Manage relationships</span></div>
-            <div class="tool-pill"><span>📊</span> Portfolio<span class="tool-badge" style="background:rgba(5,150,105,.2);color:#6EE7B7">Global overview</span></div>
+            <div class="tool-pill"><span></span> Customers<span class="tool-badge" style="background:rgba(61,171,142,.2);color:#6EE7B7">Manage relationships</span></div>
+            <div class="tool-pill"><span></span> Portfolio<span class="tool-badge" style="background:rgba(61,171,142,.2);color:#6EE7B7">Global overview</span></div>
           </div>
           <div class="mcf" style="margin-top:14px">
-            <div class="mcfi"><div class="fdot" style="background:var(--gr)"></div>AI-recommended actions for each key account update</div>
-            <div class="mcfi"><div class="fdot" style="background:var(--gr)"></div>Opportunity score for cross-sell prioritization</div>
-            <div class="mcfi"><div class="fdot" style="background:var(--gr)"></div>Automated QBR preparation</div>
+            <div class="mcfi"><div class="fdot" style="background:var(--acc-green)"></div>AI-recommended actions for each key account update</div>
+            <div class="mcfi"><div class="fdot" style="background:var(--acc-green)"></div>Opportunity score for cross-sell prioritization</div>
+            <div class="mcfi"><div class="fdot" style="background:var(--acc-green)"></div>Portfolio feedback loop — extracts insights from client conversations</div>
           </div>
         </div>
       </div>
@@ -438,12 +762,14 @@ html,body{width:100%;height:100%;font-family:'Trebuchet MS','Segoe UI',Arial,san
   </div>
 </div>
 
-<!-- S5: SPICED METHODOLOGY -->
+<!-- 
+     S5 · SPICED METHODOLOGY
+ -->
 <div class="slide" id="slide-4">
-  <div class="orb" style="width:400px;height:400px;background:radial-gradient(circle,rgba(232,113,74,.1) 0%,transparent 70%);top:-80px;right:-40px"></div>
+  <div class="orb" style="width:400px;height:400px;background:radial-gradient(circle,rgba(212,120,138,.2) 0%,transparent 70%);top:-80px;right:-40px"></div>
   <div class="in">
     <div class="lbl">Part 3 · How We Sell</div>
-    <h2 class="h1">The SPICED <span>Methodology</span></h2>
+    <h2 class="h1">The SPICED <span class="g">Methodology</span></h2>
     <div class="ibox" style="margin-bottom:18px;font-size:11px">
       At uman, we don't sell software. We sell <strong>better sales outcomes</strong>. Our sales process follows SPICED — a framework that ensures we qualify deeply, create urgency, and build a strong business case at every stage of the deal.
     </div>
@@ -452,211 +778,222 @@ html,body{width:100%;height:100%;font-family:'Trebuchet MS','Segoe UI',Arial,san
         <div class="sp-letter">S</div>
         <div class="sp-title">Situation</div>
         <div class="sp-sub">Understand their reality</div>
-        <div class="sp-desc">Map their current recruitment ecosystem. How is hiring structured? Who conducts interviews? What tools do they use? Are they scaling or optimizing?</div>
-        <div class="sp-outcome">→ Clear understanding of their hiring setup and whether uman can create measurable value</div>
+        <div class="sp-desc">Map the prospect's current sales ecosystem. How is their team structured? How many reps? What tools do they use? Are they scaling or optimizing? What does their portfolio look like?</div>
+        <div class="sp-outcome">→ Clear understanding of their sales setup and whether uman can create measurable value</div>
       </div>
       <div class="sp-card">
         <div class="sp-letter">P</div>
         <div class="sp-title">Pain</div>
         <div class="sp-sub">Expose inefficiencies</div>
-        <div class="sp-desc">Make hiring challenges explicit and acknowledged. Unstructured interviews, bias, poor candidate experience, hiring decisions based on gut feeling.</div>
-        <div class="sp-outcome">→ Clearly defined problem that leadership recognizes as important to solve</div>
+        <div class="sp-desc">Make sales challenges explicit and acknowledged. Reps only sell what they know. Cross-sell missed. Manual prep eating hours. Portfolio not positioned correctly. No feedback loop.</div>
+        <div class="sp-outcome">→ Clearly defined problem that sales leadership recognizes as important to solve</div>
       </div>
       <div class="sp-card">
         <div class="sp-letter">I</div>
         <div class="sp-title">Impact</div>
         <div class="sp-sub">Quantify the business case</div>
-        <div class="sp-desc">Translate inefficiencies into measurable business impact. Cost of bad hires, lost productivity, manager time waste, compliance risk.</div>
+        <div class="sp-desc">Translate inefficiencies into measurable business impact. Time wasted on prep, missed cross-sells, lost win-rate, poor forecasting, slow ramp-up of new reps.</div>
         <div class="sp-outcome">→ Strong financial and strategic argument. Without quantified impact, there is no deal.</div>
       </div>
       <div class="sp-card">
         <div class="sp-letter">C</div>
         <div class="sp-title">Critical Event</div>
         <div class="sp-sub">Why now?</div>
-        <div class="sp-desc">Identify the trigger that forces action. Scaling this quarter? Leadership pressure? Preparing for funding? Recent bad hire? Deals close because of urgency.</div>
+        <div class="sp-desc">Identify the trigger that forces action. Scaling this quarter? New sales team? Leadership pressure on revenue targets? Sales transformation underway? Deals close because of urgency.</div>
         <div class="sp-outcome">→ Clear timeline tied to a business-critical moment. No critical event = low closing probability.</div>
       </div>
       <div class="sp-card">
         <div class="sp-letter">E</div>
         <div class="sp-title">Decision</div>
         <div class="sp-sub">Navigate the buying process</div>
-        <div class="sp-desc">Drive alignment and close predictably. Map stakeholders (Head of Talent, HR Director, COO, CEO). Identify the economic decision-maker and internal champion.</div>
+        <div class="sp-desc">Drive alignment and close predictably. Map stakeholders (Sales Director, CCO, Head of Sales Ops, C-level). Identify the economic decision-maker and internal champion.</div>
         <div class="sp-outcome">→ Structured buying journey with no surprises. Tailored demos, objection handling, mutual close plan.</div>
       </div>
-      <div class="sp-card" style="background:rgba(232,113,74,.06);border-color:rgba(232,113,74,.2)">
-        <div class="sp-letter" style="color:rgba(232,113,74,.2)">+</div>
+      <div class="sp-card" style="background:rgba(212,120,138,.05);border-color:rgba(212,120,138,.18)">
+        <div class="sp-letter" style="opacity:.15">+</div>
         <div class="sp-title">Implementation</div>
         <div class="sp-sub">Value realization</div>
-        <div class="sp-desc">Closing is not the finish line. Real impact is. Structured onboarding, success milestone tracking, executive check-ins, case study development.</div>
-        <div class="sp-outcome">→ Demonstrated ROI and long-term partnership</div>
+        <div class="sp-desc">Closing is not the finish line. Real impact is. Structured onboarding via workstreams (Strategy, IT setup, Portfolio governance, Per sales team), success milestone tracking, QBRs.</div>
+        <div class="sp-outcome">→ Demonstrated ROI and long-term partnership. +10% win-rate (Proximus). +15% cross-sell (Normec).</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- S6: ICP -->
+<!-- 
+     S6 · ICP
+ -->
 <div class="slide" id="slide-5">
-  <div class="orb" style="width:380px;height:380px;background:radial-gradient(circle,rgba(232,113,74,.1) 0%,transparent 70%);top:-80px;right:-40px"></div>
+  <div class="orb" style="width:380px;height:380px;background:radial-gradient(circle,rgba(232,160,122,.25) 0%,transparent 70%);top:-80px;right:-40px"></div>
   <div class="in">
     <div class="lbl">Part 3 · Who We Sell To</div>
-    <h2 class="h1">Ideal Customer <span>Profile</span></h2>
+    <h2 class="h1">Ideal Customer <span class="g">Profile</span></h2>
     <div class="tier-sel">
-      <button class="tbtn active" onclick="switchTier(0)">Tier 1 — High Priority</button>
-      <button class="tbtn t2" onclick="switchTier(1)">Tier 2 — Medium Priority</button>
-      <button class="tbtn t3" onclick="switchTier(2)">Tier 3 — Inbound Only</button>
+      <button class="tbtn t1 active" onclick="switchTier(0)">Tier 1 A-List — 50+ reps BE/NL</button>
+      <button class="tbtn t2" onclick="switchTier(1)">Tier 1 B-List — 20-50 reps BE/NL, 50+ global</button>
+      <button class="tbtn t3" onclick="switchTier(2)">Tier 2 — 20-50 reps BE/NL</button>
     </div>
     <div class="tpanel active" id="tier-0">
       <div class="tm tm0">
-        <div class="tbadge" style="background:rgba(232,113,74,.15);color:var(--ol)"><div style="width:5px;height:5px;border-radius:50%;background:var(--o)"></div>Tier 1 · High Priority</div>
-        <div class="tacv" style="color:var(--o)">€60k</div>
+        <div class="tbadge" style="background:rgba(212,120,138,.15);color:rgba(180,90,50,.9)"><div style="width:5px;height:5px;border-radius:50%;background:var(--pink)"></div>Tier 1 A-List · Primary Target</div>
+        <div class="tacv" style="background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">€100k+</div>
         <div class="tacvl">Target ACV</div>
         <div class="tstats">
-          <div class="tst"><span class="tsk">Revenue</span><span class="tsv">€100M+</span></div>
+          <div class="tst"><span class="tsk">Location</span><span class="tsv">BE / NL</span></div>
           <div class="tst"><span class="tsk">Sales Reps</span><span class="tsv">50+</span></div>
-          <div class="tst"><span class="tsk">Services</span><span class="tsv">5+</span></div>
-          <div class="tst"><span class="tsk">Approach</span><span class="tsv">Outbound</span></div>
+          <div class="tst"><span class="tsk">Portfolio</span><span class="tsv">Complex, multiple services</span></div>
+          <div class="tst"><span class="tsk">Approach</span><span class="tsv">Outbound proactive</span></div>
         </div>
       </div>
       <div class="twhy">
-        <h4>Why Tier 1?</h4>
-        <div class="wi"><div class="wd" style="background:var(--o)"></div><div class="wt"><strong>Greater impact</strong> — broader portfolios and larger sales teams = higher ROI from uman</div></div>
-        <div class="wi"><div class="wd" style="background:var(--o)"></div><div class="wt"><strong>Higher willingness to pay</strong> — they see strategic value and have aligned budgets</div></div>
-        <div class="wi"><div class="wd" style="background:var(--o)"></div><div class="wt"><strong>Better implementation success</strong> — maturity, structure, and resources to adopt deeply</div></div>
-        <div class="wi"><div class="wd" style="background:var(--o)"></div><div class="wt">Rule: hitting <strong>any</strong> Tier 1 criterion = Tier 1. Revenue measured at group level.</div></div>
-        <div class="wi"><div class="wd" style="background:var(--o)"></div><div class="wt">Examples: <strong>Proximus, Randstad, PwC, msg global</strong></div></div>
+        <h4>Why Tier 1 A-List?</h4>
+        <div class="wi"><div class="wd" style="background:var(--pink)"></div><div class="wt"><strong>Maximum impact</strong> — large portfolios + big sales teams = highest ROI from uman</div></div>
+        <div class="wi"><div class="wd" style="background:var(--pink)"></div><div class="wt"><strong>Higher willingness to pay</strong> — they see strategic value and have aligned budgets (min €100k ACV)</div></div>
+        <div class="wi"><div class="wd" style="background:var(--pink)"></div><div class="wt"><strong>Better implementation success</strong> — maturity, structure, and resources to adopt deeply</div></div>
+        <div class="wi"><div class="wd" style="background:var(--pink)"></div><div class="wt"><strong>Consultative selling</strong> — B2B services with complex, high-value sales cycles</div></div>
+        <div class="wi"><div class="wd" style="background:var(--pink)"></div><div class="wt">Examples: <strong>Proximus NXT, Randstad, KPMG, DPG Media</strong></div></div>
       </div>
     </div>
     <div class="tpanel" id="tier-1">
       <div class="tm tm1">
-        <div class="tbadge" style="background:rgba(74,108,247,.15);color:#8BA3FF"><div style="width:5px;height:5px;border-radius:50%;background:var(--bl)"></div>Tier 2 · Medium Priority</div>
-        <div class="tacv" style="color:var(--bl)">€45k</div>
+        <div class="tbadge" style="background:rgba(126,184,212,.15);color:rgba(60,130,170,.9)"><div style="width:5px;height:5px;border-radius:50%;background:var(--blue2)"></div>Tier 1 B-List · Primary Target</div>
+        <div class="tacv" style="color:var(--blue)">€60k+</div>
         <div class="tacvl">Target ACV</div>
         <div class="tstats">
-          <div class="tst"><span class="tsk">Revenue</span><span class="tsv">€30M+</span></div>
-          <div class="tst"><span class="tsk">Sales Reps</span><span class="tsv">20–50</span></div>
-          <div class="tst"><span class="tsk">Services</span><span class="tsv">5+</span></div>
-          <div class="tst"><span class="tsk">Approach</span><span class="tsv">Outbound</span></div>
+          <div class="tst"><span class="tsk">Location</span><span class="tsv">BE / NL (entity)</span></div>
+          <div class="tst"><span class="tsk">Sales Reps BE/NL</span><span class="tsv">20–50</span></div>
+          <div class="tst"><span class="tsk">Sales Reps Global</span><span class="tsv">50+</span></div>
+          <div class="tst"><span class="tsk">Approach</span><span class="tsv">Outbound proactive</span></div>
         </div>
       </div>
       <div class="twhy">
-        <h4>Why Tier 2?</h4>
-        <div class="wi"><div class="wd" style="background:var(--bl)"></div><div class="wt"><strong>Mid-market sweet spot</strong> — enough complexity to need uman, enough budget to buy it</div></div>
-        <div class="wi"><div class="wd" style="background:var(--bl)"></div><div class="wt"><strong>Growing segment</strong> — companies actively scaling their sales operations</div></div>
-        <div class="wi"><div class="wd" style="background:var(--bl)"></div><div class="wt"><strong>Lower cycle risk</strong> — cleaner decision-making with fewer stakeholders</div></div>
-        <div class="wi"><div class="wd" style="background:var(--bl)"></div><div class="wt">Examples: <strong>Codit, Flexso, Ingenium</strong></div></div>
+        <h4>Why Tier 1 B-List?</h4>
+        <div class="wi"><div class="wd" style="background:var(--blue2)"></div><div class="wt"><strong>Global reach, local entity</strong> — 20-50 reps in BE/NL but 50+ globally → still qualifies as Tier 1</div></div>
+        <div class="wi"><div class="wd" style="background:var(--blue2)"></div><div class="wt"><strong>Primary target</strong> — same focus level as A-List, high-value pursuit</div></div>
+        <div class="wi"><div class="wd" style="background:var(--blue2)"></div><div class="wt"><strong>Revenue measured at group level</strong> — not just the local entity</div></div>
+        <div class="wi"><div class="wd" style="background:var(--blue2)"></div><div class="wt">Examples: <strong>msg global, Akkodis, Plat4mation</strong></div></div>
       </div>
     </div>
     <div class="tpanel" id="tier-2">
       <div class="tm tm2">
-        <div class="tbadge" style="background:rgba(5,150,105,.15);color:#6EE7B7"><div style="width:5px;height:5px;border-radius:50%;background:var(--gr)"></div>Tier 3 · Inbound Only</div>
-        <div class="tacv" style="color:var(--gr)">~€17k</div>
-        <div class="tacvl">Average ACV</div>
+        <div class="tbadge" style="background:rgba(61,171,142,.15);color:#6EE7B7"><div style="width:5px;height:5px;border-radius:50%;background:var(--acc-green)"></div>Tier 2 A-List · Secondary Target</div>
+        <div class="tacv" style="color:var(--acc-green)">€40k+</div>
+        <div class="tacvl">Target ACV</div>
         <div class="tstats">
-          <div class="tst"><span class="tsk">Revenue</span><span class="tsv">€10M–30M</span></div>
-          <div class="tst"><span class="tsk">Sales Reps</span><span class="tsv">7–20</span></div>
-          <div class="tst"><span class="tsk">Services</span><span class="tsv">5+</span></div>
-          <div class="tst"><span class="tsk">Approach</span><span class="tsv">Inbound only</span></div>
+          <div class="tst"><span class="tsk">Location</span><span class="tsv">BE / NL</span></div>
+          <div class="tst"><span class="tsk">Sales Reps</span><span class="tsv">20–50</span></div>
+          <div class="tst"><span class="tsk">Portfolio</span><span class="tsv">Complex, multiple services</span></div>
+          <div class="tst"><span class="tsk">Approach</span><span class="tsv">Outbound secondary</span></div>
         </div>
       </div>
       <div class="twhy">
-        <h4>About Tier 3</h4>
-        <div class="wi"><div class="wd" style="background:var(--gr)"></div><div class="wt"><strong>Not primary focus in 2026</strong> — equally long sales cycle but lower conversion</div></div>
-        <div class="wi"><div class="wd" style="background:var(--gr)"></div><div class="wt"><strong>Inbound only</strong> — we respond when they come to us, we don't chase</div></div>
-        <div class="wi"><div class="wd" style="background:var(--gr)"></div><div class="wt">Smaller companies <strong>push back on every euro</strong> — harder to demonstrate ROI</div></div>
+        <h4>About Tier 2</h4>
+        <div class="wi"><div class="wd" style="background:var(--acc-green)"></div><div class="wt"><strong>Secondary focus in 2026</strong> — targeted but not primary outbound priority</div></div>
+        <div class="wi"><div class="wd" style="background:var(--acc-green)"></div><div class="wt"><strong>Mid-market sweet spot</strong> — enough complexity to need uman, enough budget to buy it</div></div>
+        <div class="wi"><div class="wd" style="background:var(--acc-green)"></div><div class="wt"><strong>Hard rule:</strong> companies with <strong>fewer than 20 reps globally = DO NOT PURSUE</strong></div></div>
+        <div class="wi"><div class="wd" style="background:var(--acc-green)"></div><div class="wt">Examples: <strong>Codit, Flexso, Normec</strong></div></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- S7: STRATEGY 2026 -->
+<!-- 
+     S7 · STRATEGY 2026
+ -->
 <div class="slide" id="slide-6">
-  <div class="orb" style="width:400px;height:400px;background:radial-gradient(circle,rgba(232,113,74,.11) 0%,transparent 70%);top:-80px;left:-50px"></div>
+  <div class="orb" style="width:400px;height:400px;background:radial-gradient(circle,rgba(232,160,122,.25) 0%,transparent 70%);top:-80px;left:-50px"></div>
   <div class="in">
     <div class="lbl">Part 3 · Strategy</div>
-    <h2 class="h1">2026 <span>Strategy</span></h2>
+    <h2 class="h1">2026 <span class="g">Strategy</span></h2>
     <div class="strat-layout">
       <div class="bmet">
-        <div class="bnum">€2M+</div>
+        <div class="bnum">€2.5M</div>
         <div class="blbl">ARR Target 2026</div>
-        <div class="bgrow">From <strong>€788k in 2025</strong> — that's 100%+ growth</div>
+        <div class="bgrow">From <strong>€788k in 2025</strong> — ~200%+ growth ambition. 1,000 clients × €100k = €100M ARR long-term goal.</div>
       </div>
       <div class="geo-c">
         <h3>Geographic Focus</h3>
-        <div class="geo-row"><div class="gdot" style="background:var(--o)"></div><div class="gn">Belgium & Netherlands</div><span class="gbadge">Primary</span></div>
-        <div class="geo-row"><div class="gdot" style="background:var(--bl)"></div><div class="gn">France</div><div class="gnote">Partner: Halifax · Target: €200k ARR</div></div>
-        <div class="geo-row"><div class="gdot" style="background:var(--gr)"></div><div class="gn">Spain</div><div class="gnote">Partner: Krama · Target: €200k ARR</div></div>
-        <div class="geo-row"><div class="gdot" style="background:var(--pu)"></div><div class="gn">Nordics</div><div class="gnote">Led by Sam · Target: €200k ARR</div></div>
-        <div class="geo-row" style="opacity:.5"><div class="gdot" style="background:var(--mid)"></div><div class="gn">UK / US / Middle East / AUS</div><div class="gnote">Partnerships</div></div>
+        <div class="geo-row"><div class="gdot" style="background:var(--pink)"></div><div class="gn">Belgium & Netherlands</div><span class="gbadge">Primary</span></div>
+        <div class="geo-row"><div class="gdot" style="background:var(--blue2)"></div><div class="gn">France</div><div class="gnote">Partner: Halifax · Target: €200k ARR</div></div>
+        <div class="geo-row"><div class="gdot" style="background:var(--acc-green)"></div><div class="gn">Spain</div><div class="gnote">Partner: Krama · Target: €200k ARR</div></div>
+        <div class="geo-row"><div class="gdot" style="background:var(--acc-purple)"></div><div class="gn">Nordics</div><div class="gnote">Led by Sam · Target: €200k ARR</div></div>
+        <div class="geo-row" style="opacity:.45"><div class="gdot" style="background:var(--mid)"></div><div class="gn">UK / US / Middle East / AUS</div><div class="gnote">Partnerships channel</div></div>
       </div>
     </div>
     <div class="kpi3">
       <div class="kpi-c"><div class="kpi-n">8</div><div class="kpi-l">SQOs/month<br>per POD</div></div>
       <div class="kpi-c"><div class="kpi-n">12</div><div class="kpi-l">New clients/year<br>per POD</div></div>
-      <div class="kpi-c"><div class="kpi-n">115%</div><div class="kpi-l">Retention<br>target</div></div>
+      <div class="kpi-c"><div class="kpi-n">100%</div><div class="kpi-l">NRR target<br>retention</div></div>
     </div>
   </div>
 </div>
 
-<!-- S8: TOOLS & OPS -->
+<!-- 
+     S8 · TOOLS & OPS
+ -->
 <div class="slide" id="slide-7">
-  <div class="orb" style="width:380px;height:380px;background:radial-gradient(circle,rgba(123,92,240,.1) 0%,transparent 70%);top:-70px;right:-30px"></div>
+  <div class="orb" style="width:380px;height:380px;background:radial-gradient(circle,rgba(139,114,212,.22) 0%,transparent 70%);top:-70px;right:-30px"></div>
   <div class="in">
     <div class="lbl">Part 4 · Internal Tools</div>
-    <h2 class="h1">Tools & <span>Setup</span></h2>
+    <h2 class="h1">Tools & <span class="g">Setup</span></h2>
     <div class="tools-ops-grid">
-      <div class="toc"><div class="tic" style="background:#E8714A">HS</div><div><h4>HubSpot</h4><span class="ttag treq">Required · CRM</span><p class="tdd">Master of all data. Every company, deal, and contact lives here. If it's not in HubSpot, it doesn't exist. Keep it clean — always. Data quality is a non-negotiable at uman.</p></div></div>
-      <div class="toc"><div class="tic" style="background:#4A6CF7">GD</div><div><h4>Google Drive</h4><span class="ttag treq">Required · Docs</span><p class="tdd">All sales materials, onboarding docs, reporting, and templates. Organized by Tier, function, and department. Know where everything lives from day one.</p></div></div>
-      <div class="toc"><div class="tic" style="background:#1C1C1C;border:1px solid rgba(255,255,255,.1)">N</div><div><h4>Notion</h4><span class="ttag trec">Recommended · Notes</span><p class="tdd">Personal notes, to-do lists, and internal knowledge base. Great for personal organization without cluttering HubSpot or Drive.</p></div></div>
-      <div class="toc"><div class="tic" style="background:linear-gradient(135deg,#E8714A,#C45A32)">U</div><div><h4>uman</h4><span class="ttag treq">Required · Platform</span><p class="tdd">You'll use the product like the sales team does. The best way to understand what you're building and selling is to use it every single day as if you were a rep.</p></div></div>
+      <div class="toc"><div class="tic" style="background:linear-gradient(135deg,#E8714A,#D4724A)">HS</div><div><h4>HubSpot</h4><span class="ttag treq">Required · CRM</span><p class="tdd">Master of all data. Every company, deal, and contact lives here. If it's not in HubSpot, it doesn't exist. Keep it clean — always. Data quality is a non-negotiable at uman.</p><button class="vid-btn" onclick="openVid('t8QM5zunC44')"><span class="play"><svg viewBox="0 0 8 8"><polygon points="1,0 7,4 1,8"/></svg></span>Watch HubSpot tutorial</button></div></div>
+      <div class="toc"><div class="tic" style="background:linear-gradient(135deg,var(--blue2),var(--blue))">GD</div><div><h4>Google Drive</h4><span class="ttag treq">Required · Docs</span><p class="tdd">All sales materials, onboarding docs, reporting, and templates. Organized by Tier, function, and department. Know where everything lives from day one.</p><button class="vid-btn" onclick="openVid('dlXrq8va3A4')"><span class="play"><svg viewBox="0 0 8 8"><polygon points="1,0 7,4 1,8"/></svg></span>Watch Google Drive tutorial</button></div></div>
+      <div class="toc"><div class="tic" style="background:#1A1C26;border:1px solid rgba(255,255,255,.1)">N</div><div><h4>Notion</h4><span class="ttag trec">Recommended · Notes</span><p class="tdd">Personal notes, to-do lists, and internal knowledge base. Great for personal organization without cluttering HubSpot or Drive.</p><button class="vid-btn" onclick="openVid('PFHsAX9Eu7c')"><span class="play"><svg viewBox="0 0 8 8"><polygon points="1,0 7,4 1,8"/></svg></span>Watch Notion tutorial</button></div></div>
+      <div class="toc"><div class="tic" style="background:var(--grad2)">U</div><div><h4>uman</h4><span class="ttag treq">Required · Platform</span><p class="tdd">You'll use the product like the sales team does. The best way to understand what you're building and selling is to use it every single day as if you were a rep.</p><button class="vid-btn" onclick="openVid('Vr2j8whkVFU')"><span class="play"><svg viewBox="0 0 8 8"><polygon points="1,0 7,4 1,8"/></svg></span>Watch uman overview</button></div></div>
     </div>
-    <div style="margin-top:16px;padding:12px 18px;background:rgba(232,113,74,.08);border:1px solid rgba(232,113,74,.18);border-radius:11px;font-size:11px;color:var(--ol)">
+    <div style="margin-top:16px;padding:12px 18px;background:rgba(212,120,138,.07);border:1px solid rgba(212,120,138,.2);border-radius:11px;font-size:11px;color:#B05070">
       <strong style="color:white">Day 1 action:</strong> Request all tool accesses from your manager — don't start week 2 without them all set up.
     </div>
   </div>
 </div>
 
-<!-- S9: WAY OF WORKING -->
+<!-- 
+     S9 · WAY OF WORKING
+ -->
 <div class="slide" id="slide-8">
-  <div class="orb" style="width:360px;height:360px;background:radial-gradient(circle,rgba(74,108,247,.09) 0%,transparent 70%);bottom:-70px;left:-40px"></div>
+  <div class="orb" style="width:360px;height:360px;background:radial-gradient(circle,rgba(126,184,212,.2) 0%,transparent 70%);bottom:-70px;left:-40px"></div>
   <div class="in">
     <div class="lbl">Part 4 · Operations</div>
-    <h2 class="h1">How We <span>Work</span></h2>
+    <h2 class="h1">How We <span class="g">Work</span></h2>
     <div class="wow-grid">
       <div class="mcol">
         <h3>Meeting Cadence</h3>
-        <div class="mrow"><span class="fpill" style="background:rgba(232,113,74,.15);color:var(--ol)">Weekly</span><div class="minfo"><h5>Pipeline Review</h5><p>Monday 9:00–9:45 & 10:00–10:45</p></div></div>
-        <div class="mrow"><span class="fpill" style="background:rgba(232,113,74,.15);color:var(--ol)">Weekly</span><div class="minfo"><h5>Commercial Team Update</h5><p>Monday 12:00–13:00</p></div></div>
-        <div class="mrow"><span class="fpill" style="background:rgba(74,108,247,.15);color:#8BA3FF">Monthly</span><div class="minfo"><h5>KPI Deep-Dive</h5><p>1st week of the month</p></div></div>
-        <div class="mrow"><span class="fpill" style="background:rgba(74,108,247,.15);color:#8BA3FF">Monthly</span><div class="minfo"><h5>1-on-1 with Manager</h5><p>3rd week of the month</p></div></div>
-        <div class="mrow"><span class="fpill" style="background:rgba(5,150,105,.15);color:#6EE7B7">Quarterly</span><div class="minfo"><h5>Quarter Review</h5><p>End of Q1 & Q3</p></div></div>
-        <div class="mrow"><span class="fpill" style="background:rgba(245,158,11,.15);color:#FCD34D">Bi-annual</span><div class="minfo"><h5>Mid & End of Year Review</h5><p>Full feedback + upcoming period</p></div></div>
+        <div class="mrow"><span class="fpill" style="background:rgba(212,120,138,.15);color:rgba(180,90,50,.9)">Weekly</span><div class="minfo"><h5>Pipeline Review</h5><p>Monday 9:00–9:45 & 10:00–10:45</p></div></div>
+        <div class="mrow"><span class="fpill" style="background:rgba(212,120,138,.15);color:rgba(180,90,50,.9)">Weekly</span><div class="minfo"><h5>Commercial Team Update</h5><p>Monday 12:00–13:00</p></div></div>
+        <div class="mrow"><span class="fpill" style="background:rgba(126,184,212,.15);color:rgba(60,130,170,.9)">Monthly</span><div class="minfo"><h5>KPI Deep-Dive</h5><p>1st week of the month</p></div></div>
+        <div class="mrow"><span class="fpill" style="background:rgba(126,184,212,.15);color:rgba(60,130,170,.9)">Monthly</span><div class="minfo"><h5>1-on-1 with Manager</h5><p>3rd week of the month</p></div></div>
+        <div class="mrow"><span class="fpill" style="background:rgba(61,171,142,.15);color:#6EE7B7">Quarterly</span><div class="minfo"><h5>Quarter Review + QBR</h5><p>End of Q1 & Q3</p></div></div>
+        <div class="mrow"><span class="fpill" style="background:rgba(212,164,61,.15);color:#FCD34D">Bi-annual</span><div class="minfo"><h5>Mid & End of Year Review</h5><p>Full feedback + upcoming period</p></div></div>
       </div>
       <div class="rules-col">
-        <div class="rpill"><div class="rbar" style="background:var(--o)"></div><div class="rtext"><strong>Inbound leads</strong> — respond within 2 hours, always</div></div>
-        <div class="rpill"><div class="rbar" style="background:var(--o)"></div><div class="rtext"><strong>HubSpot</strong> — keep data clean and up to date at all times</div></div>
-        <div class="rpill"><div class="rbar" style="background:var(--bl)"></div><div class="rtext"><strong>Next step is key</strong> — always plan it and note it down</div></div>
-        <div class="rpill"><div class="rbar" style="background:var(--bl)"></div><div class="rtext"><strong>2 days/week</strong> minimum in the office</div></div>
-        <div class="rpill"><div class="rbar" style="background:var(--pu)"></div><div class="rtext"><strong>LinkedIn</strong> — post at least 2x/month about uman</div></div>
-        <div class="rpill"><div class="rbar" style="background:var(--gr)"></div><div class="rtext"><strong>Honesty & respect</strong> — non-negotiable here</div></div>
-        <div class="rpill"><div class="rbar" style="background:var(--ye)"></div><div class="rtext"><strong>Friday</strong> — finish tasks, evaluate week, plan next week</div></div>
+        <div class="rpill"><div class="rbar" style="background:var(--pink)"></div><div class="rtext"><strong>Inbound leads</strong> — respond within 2 hours, always</div></div>
+        <div class="rpill"><div class="rbar" style="background:var(--pink)"></div><div class="rtext"><strong>HubSpot</strong> — keep data clean and up to date at all times</div></div>
+        <div class="rpill"><div class="rbar" style="background:var(--blue2)"></div><div class="rtext"><strong>Next step is key</strong> — always plan it and note it down</div></div>
+        <div class="rpill"><div class="rbar" style="background:var(--blue2)"></div><div class="rtext"><strong>2-3 days/week</strong> minimum in the office (Ghent)</div></div>
+        <div class="rpill"><div class="rbar" style="background:var(--acc-purple)"></div><div class="rtext"><strong>LinkedIn</strong> — post at least 2x/month about uman</div></div>
+        <div class="rpill"><div class="rbar" style="background:var(--acc-green)"></div><div class="rtext"><strong>Honesty & respect</strong> — non-negotiable here</div></div>
+        <div class="rpill"><div class="rbar" style="background:var(--acc-yellow)"></div><div class="rtext"><strong>Friday</strong> — finish tasks, evaluate week, plan next week</div></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- S10: OBJECTIONS -->
+<!-- 
+     S10 · OBJECTIONS
+ -->
 <div class="slide" id="slide-9">
-  <div class="orb" style="width:380px;height:380px;background:radial-gradient(circle,rgba(232,113,74,.1) 0%,transparent 70%);top:-80px;right:-40px"></div>
+  <div class="orb" style="width:380px;height:380px;background:radial-gradient(circle,rgba(232,160,122,.25) 0%,transparent 70%);top:-80px;right:-40px"></div>
   <div class="in">
     <div class="lbl">Part 3 · Sales Enablement</div>
-    <h2 class="h1">Handling <span>Objections</span></h2>
+    <h2 class="h1">Handling <span class="g">Objections</span></h2>
     <div class="ibox" style="margin-bottom:18px;font-size:11px">
       These are the most common objections you'll encounter. Know them cold — your ability to respond confidently and quickly is what separates good reps from great ones.
     </div>
     <div class="obj-grid">
       <div class="obj-card">
         <div class="obj-q">We already use ChatGPT / Copilot</div>
-        <div class="obj-a">Uman is a <strong>purpose-built sales enablement brain</strong> — not a generic AI. It lives inside your mailbox/CRM, already knows your full service portfolio, pulls in every scrap of internal + external customer intel, and follows your own sales methodology automatically. The result is <strong>context-rich, consistent workflows</strong> your reps can use instantly. No prompt hacking. No copy-pasting. No scattered guesses like a generic ChatGPT or Copilot.</div>
+        <div class="obj-a">Uman is a <strong>purpose-built sales enablement brain</strong> — not a generic AI. It lives inside your mailbox/CRM, already knows your full service portfolio, pulls in every scrap of internal + external customer intel, and follows your own sales methodology automatically. The result is <strong>context-rich, consistent workflows</strong> your reps can use instantly. No prompt hacking. No copy-pasting. No scattered guesses.</div>
       </div>
       <div class="obj-card">
         <div class="obj-q">What about our data security?</div>
@@ -664,108 +1001,134 @@ html,body{width:100%;height:100%;font-family:'Trebuchet MS','Segoe UI',Arial,san
       </div>
       <div class="obj-card">
         <div class="obj-q">How fast can we go live?</div>
-        <div class="obj-a">Our implementation plan is optimised for <strong>time-to-value</strong> — which means you will be able to be up and running <strong>from week 1</strong>. Gradually we extend the use cases and scope of adoption based on your priorities.</div>
+        <div class="obj-a">Our implementation plan is optimised for <strong>time-to-value</strong> — you will be able to be up and running <strong>from week 1</strong>. We run parallel workstreams (Strategy, IT setup, Portfolio governance, per sales team) so teams can onboard without waiting for each other. Gradually we extend scope and adoption based on your priorities.</div>
       </div>
       <div class="obj-card">
-        <div class="obj-q">We already use other AI tools</div>
-        <div class="obj-a">Uman <strong>replaces some tools</strong>, but often functions as the <strong>primary layer</strong> of your sales team's AI stack. It brings together prospecting, deal execution, and account management in one platform — replacing the need to stitch together multiple disconnected tools.</div>
+        <div class="obj-q">We already use other AI tools / Showpad / Highspot</div>
+        <div class="obj-a">Uman is <strong>AI-native and purpose-built</strong> for solution selling — not a document library or generic enablement tool. It brings together prospecting, deal execution, and account management in one platform, with a living knowledge base that <strong>closes the feedback loop</strong> between sales and product teams. Most tools don't do this.</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- S11: WHY IT MATTERS -->
+<!-- 
+     S11 · WHY IT MATTERS
+ -->
 <div class="slide" id="slide-10">
-  <div class="orb" style="width:400px;height:400px;background:radial-gradient(circle,rgba(232,113,74,.1) 0%,transparent 70%);bottom:-80px;right:-40px"></div>
+  <div class="orb" style="width:400px;height:400px;background:radial-gradient(circle,rgba(212,120,138,.22) 0%,transparent 70%);bottom:-80px;right:-40px"></div>
   <div class="in">
     <div class="lbl">Part 5 · Market Context</div>
-    <h2 class="h1">Why <span>This Matters</span></h2>
+    <h2 class="h1">Why <span class="g">This Matters</span></h2>
     <div class="why-grid">
       <div class="why-card">
-        <div class="why-stat">95%</div>
-        <div class="why-lbl">of seller research starts with AI by 2027</div>
-        <div class="why-desc">AI tools are becoming table stakes. Competitive advantage is found in how they are applied within a disciplined operating model — not in the tools themselves.</div>
+        <div class="why-stat">30–50%</div>
+        <div class="why-lbl">productivity unlocked with AI for sales</div>
+        <div class="why-desc">Source: Boston Consulting Group. But only if the open loop gap between products & services teams and sales teams is closed. That's exactly what uman solves.</div>
       </div>
       <div class="why-card">
-        <div class="why-stat">40%</div>
-        <div class="why-lbl">of rep time wasted on non-selling tasks</div>
-        <div class="why-desc">Manual research, CRM updates, meeting prep. Uman eliminates this — giving reps back time to focus on actual selling and relationship-building.</div>
+        <div class="why-stat">+10%</div>
+        <div class="why-lbl">win-rate increase at Proximus NXT</div>
+        <div class="why-desc">Over 18 months. Significant reduction in manual meeting prep time. Better identification of new cross-sell opportunities. uman transforms strategic client meetings.</div>
       </div>
       <div class="why-card">
-        <div class="why-stat">236%</div>
-        <div class="why-lbl">ROI from centralized sales knowledge</div>
-        <div class="why-desc">According to a Forrester Total Economic Impact study. When sales effectiveness and data quality improve together through a unified platform.</div>
+        <div class="why-stat">8h</div>
+        <div class="why-lbl">saved per week per rep at DPG Media</div>
+        <div class="why-desc">Manual research, CRM updates, meeting prep. Uman eliminates this — giving reps back time to focus on actual selling. msg global reduced ramp from 5 months to 2.</div>
       </div>
     </div>
     <div class="vs-row">
       <div class="vs-card">
-        <h4><span style="color:var(--mid)">❌</span> Generic AI (ChatGPT, Copilot)</h4>
-        <div class="vs-item"><div class="vs-dot" style="background:#EF4444"></div>Requires prompt hacking and copy-pasting</div>
-        <div class="vs-item"><div class="vs-dot" style="background:#EF4444"></div>No knowledge of your portfolio or methodology</div>
-        <div class="vs-item"><div class="vs-dot" style="background:#EF4444"></div>Scattered, inconsistent outputs</div>
-        <div class="vs-item"><div class="vs-dot" style="background:#EF4444"></div>Not built for B2B sales workflows</div>
+        <h4><span style="color:var(--mid)"></span> Open Loop (without uman)</h4>
+        <div class="vs-item"><div class="vs-dot" style="background:#EF4444"></div>Reps only sell what they know — cross-sell missed</div>
+        <div class="vs-item"><div class="vs-dot" style="background:#EF4444"></div>No feedback from sales to product/service teams</div>
+        <div class="vs-item"><div class="vs-dot" style="background:#EF4444"></div>Reactive coaching, inaccurate forecasting</div>
+        <div class="vs-item"><div class="vs-dot" style="background:#EF4444"></div>Scattered content, no consistent methodology</div>
       </div>
-      <div class="vs-card" style="border-color:rgba(232,113,74,.2)">
-        <h4><span style="color:var(--o)">✓</span> Uman — Purpose-built</h4>
-        <div class="vs-item"><div class="vs-dot" style="background:var(--gr)"></div>Lives inside your mailbox or CRM — zero friction</div>
-        <div class="vs-item"><div class="vs-dot" style="background:var(--gr)"></div>Knows your full portfolio and sales methodology</div>
-        <div class="vs-item"><div class="vs-dot" style="background:var(--gr)"></div>Context-rich, consistent, instant workflows</div>
-        <div class="vs-item"><div class="vs-dot" style="background:var(--gr)"></div>ISO 27001 · GDPR · Enterprise-grade security</div>
+      <div class="vs-card" style="border-color:rgba(212,120,138,.25)">
+        <h4><span style="background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;"></span> Closed Loop (with uman)</h4>
+        <div class="vs-item"><div class="vs-dot" style="background:var(--acc-green)"></div>Sales brain suggests full portfolio proactively</div>
+        <div class="vs-item"><div class="vs-dot" style="background:var(--acc-green)"></div>Feedback loop from conversations to portfolio teams</div>
+        <div class="vs-item"><div class="vs-dot" style="background:var(--acc-green)"></div>Objective coaching analytics, data-led forecasting</div>
+        <div class="vs-item"><div class="vs-dot" style="background:var(--acc-green)"></div>ISO 27001 · GDPR · Enterprise-grade security</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- S12: WHAT TO LEARN NEXT -->
+<!-- 
+     S12 · VALUES & WHAT TO LEARN NEXT
+ -->
 <div class="slide" id="slide-11">
-  <div class="orb" style="width:360px;height:360px;background:radial-gradient(circle,rgba(232,113,74,.09) 0%,transparent 70%);top:-70px;right:-30px"></div>
+  <div class="orb" style="width:360px;height:360px;background:radial-gradient(circle,rgba(126,184,212,.09) 0%,transparent 70%);top:-70px;right:-30px"></div>
   <div class="in">
-    <div class="lbl">Part 6 · Next Steps</div>
-    <h2 class="h1">What to <span>Learn Next</span></h2>
-    <div class="ibox" style="margin-bottom:22px;font-size:12px">
-      This presentation covers the essentials. But there are things you'll only learn on the job — or by asking the right people. Here's what to dig into next.
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
-      <div class="card">
-        <div style="font-size:11px;font-weight:700;color:var(--o);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">Ask your manager</div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,.6)"><div style="width:6px;height:6px;border-radius:50%;background:var(--o);flex-shrink:0"></div>Pricing — it varies by client profile and deal size</div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,.6)"><div style="width:6px;height:6px;border-radius:50%;background:var(--o);flex-shrink:0"></div>Real client case studies and success stories</div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,.6)"><div style="width:6px;height:6px;border-radius:50%;background:var(--o);flex-shrink:0"></div>Competitor landscape and how to position against them</div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,.6)"><div style="width:6px;height:6px;border-radius:50%;background:var(--o);flex-shrink:0"></div>HubSpot workflows and CRM processes in detail</div>
+    <div class="lbl">Part 6 · Culture & Next Steps</div>
+    <h2 class="h1">Values & <span class="g">What's Next</span></h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+
+      <!-- Values -->
+      <div class="card" style="background:rgba(255,255,255,.03)">
+        <div style="font-size:11px;font-weight:700;background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px">Our 6 core values</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="display:flex;align-items:flex-start;gap:8px;font-size:11px;color:#555"><div style="width:6px;height:6px;border-radius:50%;background:var(--pink);flex-shrink:0;margin-top:3px"></div><div><strong style="color:white">Ownership</strong> — take responsibility, show commitment</div></div>
+          <div style="display:flex;align-items:flex-start;gap:8px;font-size:11px;color:#555"><div style="width:6px;height:6px;border-radius:50%;background:var(--orange);flex-shrink:0;margin-top:3px"></div><div><strong style="color:white">Pragmatic & Results-Driven</strong> — cut through the noise, solve it</div></div>
+          <div style="display:flex;align-items:flex-start;gap:8px;font-size:11px;color:#555"><div style="width:6px;height:6px;border-radius:50%;background:var(--blue2);flex-shrink:0;margin-top:3px"></div><div><strong style="color:white">Winner Mentality</strong> — play to win, raise the bar</div></div>
+          <div style="display:flex;align-items:flex-start;gap:8px;font-size:11px;color:#555"><div style="width:6px;height:6px;border-radius:50%;background:var(--acc-green);flex-shrink:0;margin-top:3px"></div><div><strong style="color:white">Best Work of Our Lives</strong> — pursue excellence relentlessly</div></div>
+          <div style="display:flex;align-items:flex-start;gap:8px;font-size:11px;color:#555"><div style="width:6px;height:6px;border-radius:50%;background:var(--acc-purple);flex-shrink:0;margin-top:3px"></div><div><strong style="color:white">Play & Fun</strong> — joke, tease and play — with respect</div></div>
+          <div style="display:flex;align-items:flex-start;gap:8px;font-size:11px;color:#555"><div style="width:6px;height:6px;border-radius:50%;background:var(--acc-yellow);flex-shrink:0;margin-top:3px"></div><div><strong style="color:white">The Best Idea Wins</strong> — egos at the door, debate ideas</div></div>
         </div>
       </div>
-      <div class="card">
-        <div style="font-size:11px;font-weight:700;color:var(--bl);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">Do yourself</div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,.6)"><div style="width:6px;height:6px;border-radius:50%;background:var(--bl);flex-shrink:0"></div>Use uman yourself — explore every module and tool</div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,.6)"><div style="width:6px;height:6px;border-radius:50%;background:var(--bl);flex-shrink:0"></div>Shadow a demo with Gilles in your first week</div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,.6)"><div style="width:6px;height:6px;border-radius:50%;background:var(--bl);flex-shrink:0"></div>Read the SPICED methodology doc in full</div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,.6)"><div style="width:6px;height:6px;border-radius:50%;background:var(--bl);flex-shrink:0"></div>Introduce yourself to every person on the team</div>
+
+      <!-- What to do next -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="card">
+          <div style="font-size:11px;font-weight:700;color:rgba(60,120,170,.95);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">Ask your manager</div>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:#555"><div style="width:5px;height:5px;border-radius:50%;background:var(--blue2);flex-shrink:0"></div>Pricing — varies by client profile and deal size</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:#555"><div style="width:5px;height:5px;border-radius:50%;background:var(--blue2);flex-shrink:0"></div>Real client case studies and win stories</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:#555"><div style="width:5px;height:5px;border-radius:50%;background:var(--blue2);flex-shrink:0"></div>Competitor landscape — Showpad, Highspot, Seismic</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:#555"><div style="width:5px;height:5px;border-radius:50%;background:var(--blue2);flex-shrink:0"></div>HubSpot workflows and CRM processes in detail</div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="font-size:11px;font-weight:700;color:rgba(180,90,50,.9);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">Do yourself — week 1</div>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:#555"><div style="width:5px;height:5px;border-radius:50%;background:var(--orange);flex-shrink:0"></div>Use uman yourself — explore every module</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:#555"><div style="width:5px;height:5px;border-radius:50%;background:var(--orange);flex-shrink:0"></div>Shadow a demo with Gilles in your first week</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:#555"><div style="width:5px;height:5px;border-radius:50%;background:var(--orange);flex-shrink:0"></div>Read the SPICED methodology doc in full</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:#555"><div style="width:5px;height:5px;border-radius:50%;background:var(--orange);flex-shrink:0"></div>Introduce yourself to every person on the team</div>
+          </div>
         </div>
       </div>
-      <div class="card" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(232,113,74,.08),rgba(232,113,74,.03));border-color:rgba(232,113,74,.2)">
-        <div style="font-size:11px;font-weight:700;color:var(--o);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">Golden rule</div>
+
+      <!-- Golden rule full width -->
+      <div class="card" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(212,120,138,.07),rgba(232,160,122,.04));border-color:rgba(212,120,138,.18)">
+        <div style="font-size:11px;font-weight:700;background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">Golden rule</div>
         <div style="font-size:13px;color:rgba(255,255,255,.7);line-height:1.6;font-style:italic">"Don't just ask what you have to do. Ask what actually helps the company grow. That mindset changes everything."</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- S13: CLOSING -->
+<!-- 
+     S13 · CLOSING
+ -->
 <div class="slide" id="slide-12">
-  <div class="close-ring" style="width:640px;height:640px;top:50%;left:50%;transform:translate(-50%,-50%);border:1px solid rgba(232,113,74,.07);animation:sp 42s linear infinite"></div>
-  <div class="close-ring" style="width:420px;height:420px;top:50%;left:50%;transform:translate(-50%,-50%);border:1px solid rgba(232,113,74,.1);animation:sp 28s linear infinite reverse"></div>
+  <!-- Gradient rings like uman cover slides -->
+  <div class="close-ring" style="width:640px;height:640px;top:50%;left:50%;transform:translate(-50%,-50%);border:1px solid rgba(212,120,138,.2);animation:sp 42s linear infinite"></div>
+  <div class="close-ring" style="width:420px;height:420px;top:50%;left:50%;transform:translate(-50%,-50%);border:1px solid rgba(126,184,212,.22);animation:sp 28s linear infinite reverse"></div>
+  <!-- Big ambient gradient -->
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 30% 40%, rgba(126,184,212,.12) 0%, transparent 60%), radial-gradient(ellipse 60% 60% at 70% 60%, rgba(212,120,138,.12) 0%, transparent 60%);pointer-events:none"></div>
+
   <div class="close-content">
     <div class="logo-c" style="width:48px;height:48px;font-size:18px;margin:0 auto 22px">U</div>
-    <h2 class="close-title">You're ready.<br><span>Now go build.</span></h2>
+    <h2 class="close-title">Prep like a machine,<br><span class="cg">sell like a human.</span></h2>
     <p class="close-sub">You now have a solid foundation to understand uman, what we sell, how we sell it, and how we work together. The rest comes with time and action.</p>
     <div class="close-pills">
-      <div class="cpill2">Who we are ✓</div>
-      <div class="cpill2">The product ✓</div>
-      <div class="cpill2">How we sell ✓</div>
-      <div class="cpill2">Tools & ops ✓</div>
-      <div class="cpill2">Why it matters ✓</div>
+      <div class="cpill2">Who we are </div>
+      <div class="cpill2">The product </div>
+      <div class="cpill2">How we sell </div>
+      <div class="cpill2">Tools & ops </div>
+      <div class="cpill2">Why it matters </div>
     </div>
     <button class="restart" onclick="goToSlide(0)">Start over ↺</button>
   </div>
@@ -773,6 +1136,7 @@ html,body{width:100%;height:100%;font-family:'Trebuchet MS','Segoe UI',Arial,san
 
 </div><!-- end sw -->
 
+<!-- NAVIGATION BAR -->
 <nav class="nav">
   <button class="nb" onclick="prevSlide()">←</button>
   <div class="ndots" id="ndots"></div>
@@ -781,66 +1145,92 @@ html,body{width:100%;height:100%;font-family:'Trebuchet MS','Segoe UI',Arial,san
 </nav>
 
 <script>
-const TOTAL=13;
-let cur=0,tr=false;
+const TOTAL = 13;
+let cur = 0, tr = false;
 
-const nd=document.getElementById('ndots');
-for(let i=0;i<TOTAL;i++){
-  const d=document.createElement('div');
-  d.className='dot'+(i===0?' active':'');
-  d.onclick=()=>goToSlide(i);
+// Build dots
+const nd = document.getElementById('ndots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.onclick = () => goToSlide(i);
   nd.appendChild(d);
 }
 
-function updateUI(){
-  document.getElementById('prog').style.width=((cur+1)/TOTAL*100)+'%';
-  document.getElementById('nc').textContent=(cur+1)+' / '+TOTAL;
-  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===cur));
+function updateUI() {
+  document.getElementById('prog').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  document.getElementById('nc').textContent = (cur + 1) + ' / ' + TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === cur));
 }
 
-function goToSlide(n){
-  if(tr||n===cur)return;
-  tr=true;
-  const p=document.getElementById('slide-'+cur);
-  const nx=document.getElementById('slide-'+n);
-  p.classList.add('exit');p.classList.remove('active');
-  setTimeout(()=>{
+function goToSlide(n) {
+  if (tr || n === cur) return;
+  tr = true;
+  const p = document.getElementById('slide-' + cur);
+  const nx = document.getElementById('slide-' + n);
+  p.classList.add('exit');
+  p.classList.remove('active');
+  setTimeout(() => {
     p.classList.remove('exit');
     nx.classList.add('active');
-    cur=n;updateUI();
-    setTimeout(()=>{tr=false;},550);
-  },260);
+    cur = n;
+    updateUI();
+    setTimeout(() => { tr = false; }, 550);
+  }, 260);
 }
 
-function nextSlide(){goToSlide(Math.min(cur+1,TOTAL-1));}
-function prevSlide(){goToSlide(Math.max(cur-1,0));}
+function nextSlide() { goToSlide(Math.min(cur + 1, TOTAL - 1)); }
+function prevSlide() { goToSlide(Math.max(cur - 1, 0)); }
 
-document.addEventListener('keydown',e=>{
-  if(e.key==='ArrowRight'||e.key==='ArrowDown')nextSlide();
-  if(e.key==='ArrowLeft'||e.key==='ArrowUp')prevSlide();
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextSlide();
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') prevSlide();
 });
 
-let tx=0;
-document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;});
-document.addEventListener('touchend',e=>{
-  const dx=tx-e.changedTouches[0].clientX;
-  if(Math.abs(dx)>50)dx>0?nextSlide():prevSlide();
+let tx = 0;
+document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  if (Math.abs(dx) > 50) dx > 0 ? nextSlide() : prevSlide();
 });
 
-function switchModule(n){
-  document.querySelectorAll('.mtab').forEach((t,i)=>t.classList.toggle('active',i===n));
-  document.querySelectorAll('.mdet').forEach((d,i)=>{
-    d.style.display=i===n?'block':'none';
-    if(i===n)d.classList.add('active');else d.classList.remove('active');
+function switchModule(n) {
+  document.querySelectorAll('.mtab').forEach((t, i) => t.classList.toggle('active', i === n));
+  document.querySelectorAll('.mdet').forEach((d, i) => {
+    d.style.display = i === n ? 'block' : 'none';
+    if (i === n) d.classList.add('active'); else d.classList.remove('active');
   });
 }
 
-function switchTier(n){
-  document.querySelectorAll('.tbtn').forEach((b,i)=>b.classList.toggle('active',i===n));
-  document.querySelectorAll('.tpanel').forEach((p,i)=>p.classList.toggle('active',i===n));
+function switchTier(n) {
+  document.querySelectorAll('.tbtn').forEach((b, i) => b.classList.toggle('active', i === n));
+  document.querySelectorAll('.tpanel').forEach((p, i) => p.classList.toggle('active', i === n));
 }
 
 updateUI();
 </script>
+
+<!-- VIDEO MODAL -->
+<div class="vmodal" id="vmodal" onclick="closeVid(event)">
+  <div class="vmodal-inner">
+    <button class="vclose" onclick="closeVidBtn()">&#x2715;</button>
+    <iframe id="vframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+</div>
+<script>
+function openVid(id){
+  document.getElementById('vframe').src='https://www.youtube.com/embed/'+id+'?autoplay=1';
+  document.getElementById('vmodal').classList.add('open');
+}
+function closeVidBtn(){
+  document.getElementById('vframe').src='';
+  document.getElementById('vmodal').classList.remove('open');
+}
+function closeVid(e){
+  if(e.target===document.getElementById('vmodal')) closeVidBtn();
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape') closeVidBtn();});
+</script>
+
 </body>
 </html>
