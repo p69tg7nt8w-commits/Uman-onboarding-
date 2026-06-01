@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Uman.ai — Employee Onboarding</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300&family=DM+Serif+Display:ital@0;1&display=swap');
+/* System font stack - works offline on all devices */
 
 :root {
   /* Uman brand gradient palette */
@@ -41,7 +41,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{
   width:100%;height:100%;
-  font-family:'DM Sans',sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',Arial,sans-serif;
   background:#F7F2EE;
   overflow:hidden;
   color:#1A1A1A;
@@ -88,7 +88,7 @@ html,body{
   width:32px;height:32px;border-radius:50%;border:none;
   background:rgba(0,0,0,.07);color:#1A1A1A;font-size:14px;
   cursor:pointer;display:flex;align-items:center;justify-content:center;
-  transition:background .2s;font-family:'DM Sans',sans-serif;
+  transition:background .2s;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',Arial,sans-serif;
 }
 .nb:hover{background:rgba(212,120,138,0.4);}
 .ndots{display:flex;gap:4px;align-items:center}
@@ -132,11 +132,11 @@ html,body{
 
 .lbl{
   font-size:8px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
-  background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  color:#B05070;
   margin-bottom:8px;display:inline-block;
 }
-.h1{font-size:clamp(26px,3.8vw,46px);font-weight:800;letter-spacing:-2px;line-height:1.02;margin-bottom:22px;color:#1A1A1A;font-family:'DM Sans',sans-serif}
-.h1 .g{background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.h1{font-size:clamp(26px,3.8vw,46px);font-weight:800;letter-spacing:-2px;line-height:1.02;margin-bottom:22px;color:#1A1A1A;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',Arial,sans-serif}
+.h1 .g{color:#C45A6E;}
 
 .card{
   background:rgba(255,255,255,.7);
@@ -158,7 +158,7 @@ html,body{
    TABS / SECTION PILLS
  */
 .tabs{display:flex;margin-bottom:22px;border-radius:10px;overflow:hidden;border:1px solid rgba(0,0,0,.08);width:fit-content}
-.tab{padding:9px 22px;font-weight:700;font-size:11px;cursor:pointer;background:transparent;color:rgba(0,0,0,.4);border:none;transition:all .3s;font-family:'DM Sans',sans-serif}
+.tab{padding:9px 22px;font-weight:700;font-size:11px;cursor:pointer;background:transparent;color:rgba(0,0,0,.4);border:none;transition:all .3s;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',Arial,sans-serif}
 .tab.active{background:var(--grad2);color:white}
 .tab-panel{display:none}
 .tab-panel.active{display:block;animation:fu .3s ease}
@@ -186,7 +186,7 @@ html,body{
   position:absolute;right:-80px;top:50%;transform:translateY(-50%);
   font-size:580px;font-weight:900;
   color:rgba(255,255,255,0.35);
-  font-family:'DM Sans',sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',Arial,sans-serif;
   line-height:1;
   pointer-events:none;
   user-select:none;
@@ -224,7 +224,7 @@ html,body{
   padding:12px 22px;border-radius:100px;
   cursor:pointer;border:none;
   transition:transform .2s,box-shadow .2s;
-  font-family:'DM Sans',sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',Arial,sans-serif;
 }
 .cpill:hover{transform:translateY(-2px);box-shadow:0 16px 32px rgba(0,0,0,.3)}
 .cpill .arr{
@@ -256,7 +256,7 @@ html,body{
   border-radius:16px;padding:20px 18px;transition:all .3s;cursor:default;
 }
 .stat-c:hover{border-color:rgba(212,120,138,.35);background:rgba(212,120,138,.04)}
-.stat-n{font-size:32px;font-weight:800;letter-spacing:-2px;line-height:1;margin-bottom:5px;background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.stat-n{font-size:32px;font-weight:800;letter-spacing:-2px;line-height:1;margin-bottom:5px;color:#C45A6E;}
 .stat-l{font-size:11px;color:#888;line-height:1.4}
 .tbar{
   background:var(--grad);
@@ -355,11 +355,11 @@ html,body{
 .sp-letter{
   font-size:52px;font-weight:800;
   position:absolute;top:-8px;right:12px;line-height:1;letter-spacing:-2px;
-  background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  opacity:.18;
+  color:rgba(196,90,110,.2);
+  opacity:1;
 }
 .sp-title{font-size:14px;font-weight:700;color:#1A1A1A;margin-bottom:5px;position:relative;z-index:1}
-.sp-sub{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px;position:relative;z-index:1;display:inline-block}
+.sp-sub{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#C45A6E;margin-bottom:10px;position:relative;z-index:1;display:inline-block}
 .sp-desc{font-size:11px;color:#777;line-height:1.5;position:relative;z-index:1}
 .sp-outcome{
   margin-top:10px;padding:7px 10px;
@@ -377,7 +377,7 @@ html,body{
   border:1.5px solid rgba(0,0,0,.12);
   background:transparent;color:rgba(0,0,0,.45);
   font-weight:700;font-size:11px;cursor:pointer;transition:all .3s;
-  font-family:'DM Sans',sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',Arial,sans-serif;
 }
 .tbtn:hover{border-color:rgba(0,0,0,.3);color:#1A1A1A}
 .tbtn.t1.active{background:var(--grad2);border-color:transparent;color:white}
@@ -426,10 +426,10 @@ html,body{
 .gdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .gn{font-size:12px;font-weight:700;color:#1A1A1A;flex:1}
 .gnote{font-size:10px;color:#888}
-.gbadge{font-size:8px;font-weight:700;padding:2px 8px;border-radius:100px;background:var(--grad2);color:white}
+.gbadge{font-size:8px;font-weight:700;padding:2px 8px;border-radius:100px;background:#C45A6E;color:white}
 .kpi3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
 .kpi-c{background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.07);border-radius:12px;padding:13px 15px;display:flex;gap:10px;align-items:center}
-.kpi-n{font-size:24px;font-weight:800;letter-spacing:-1px;background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.kpi-n{font-size:24px;font-weight:800;letter-spacing:-1px;color:#C45A6E;}
 .kpi-l{font-size:10px;color:#777}
 
 /* 
@@ -481,7 +481,7 @@ html,body{
 .why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
 .why-card{background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.07);border-radius:16px;padding:20px 18px;transition:all .3s;cursor:default}
 .why-card:hover{border-color:rgba(212,120,138,.25);transform:translateY(-2px)}
-.why-stat{font-size:32px;font-weight:800;letter-spacing:-2px;line-height:1;margin-bottom:6px;background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.why-stat{font-size:32px;font-weight:800;letter-spacing:-2px;line-height:1;margin-bottom:6px;color:#C45A6E;}
 .why-lbl{font-size:12px;font-weight:700;color:#1A1A1A;margin-bottom:5px}
 .why-desc{font-size:11px;color:#777;line-height:1.5}
 .vs-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -501,7 +501,7 @@ html,body{
 .close-ring{position:absolute;border-radius:50%;pointer-events:none}
 .close-content{text-align:center;position:relative;z-index:2;max-width:620px}
 .close-title{font-size:clamp(38px,5.5vw,72px);font-weight:800;color:#1A1A1A;letter-spacing:-3px;line-height:1.05;margin-bottom:16px}
-.close-title .cg{background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.close-title .cg{color:#C45A6E;}
 .close-sub{font-size:14px;color:rgba(0,0,0,.45);margin-bottom:28px;line-height:1.6}
 .close-pills{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:32px}
 .cpill2{padding:8px 18px;border-radius:100px;border:1px solid rgba(0,0,0,.1);background:rgba(255,255,255,.6);font-size:11px;color:rgba(0,0,0,.5);font-weight:600}
@@ -512,7 +512,7 @@ html,body{
   cursor:pointer;border:none;
   transition:transform .2s,box-shadow .2s;
   animation:pulse 2.5s ease infinite;
-  font-family:'DM Sans',sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',Arial,sans-serif;
 }
 .restart:hover{transform:translateY(-2px);box-shadow:0 16px 32px rgba(212,120,138,.3)}
 
@@ -525,7 +525,7 @@ html,body{
   border:1px solid rgba(0,0,0,.1);
   font-size:10px;font-weight:700;color:#333;
   cursor:pointer;text-decoration:none;
-  transition:all .2s;font-family:'DM Sans',sans-serif;
+  transition:all .2s;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',Arial,sans-serif;
 }
 .vid-btn:hover{background:var(--grad2);color:white;border-color:transparent;transform:translateY(-1px)}
 .vid-btn .play{width:18px;height:18px;border-radius:50%;background:var(--grad2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -632,13 +632,13 @@ html,body{
 
       <div class="tcard">
         <div class="av" style="background:linear-gradient(135deg,#D4724A,#E8A07A)">C</div>
-        <div class="tn">Charles</div><div class="tr" style="background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Head of Growth</div><div class="td">Product & Growth</div>
+        <div class="tn">Charles</div><div class="tr" style="color:#C45A6E;">Head of Growth</div><div class="td">Product & Growth</div>
         <div class="hpop"><h4>Charles — Head of Growth & Product Mgr</h4><p>Drives growth strategy and product management. Key bridge between commercial and product teams.</p><div class="ht">Go to him for product roadmap and growth initiatives.</div></div>
       </div>
 
       <div class="tcard">
         <div class="av" style="background:linear-gradient(135deg,var(--pink2),var(--pink))">S</div>
-        <div class="tn">Sam</div><div class="tr" style="background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">CCO</div><div class="td">Commercial lead</div>
+        <div class="tn">Sam</div><div class="tr" style="color:#C45A6E;">CCO</div><div class="td">Commercial lead</div>
         <div class="hpop"><h4>Sam — CCO</h4><p>Chief Commercial Officer. Oversees the entire commercial side — sales strategy, team management, and international expansion including the Nordics.</p><div class="ht">Your main point of reference for anything commercial.</div></div>
       </div>
 
@@ -1067,7 +1067,7 @@ html,body{
 
       <!-- Values -->
       <div class="card" style="background:rgba(255,255,255,.03)">
-        <div style="font-size:11px;font-weight:700;background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px">Our 6 core values</div>
+        <div style="font-size:11px;font-weight:700;color:#C45A6E;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px">Our 6 core values</div>
         <div style="display:flex;flex-direction:column;gap:7px">
           <div style="display:flex;align-items:flex-start;gap:8px;font-size:11px;color:#555"><div style="width:6px;height:6px;border-radius:50%;background:var(--pink);flex-shrink:0;margin-top:3px"></div><div><strong style="color:white">Ownership</strong> — take responsibility, show commitment</div></div>
           <div style="display:flex;align-items:flex-start;gap:8px;font-size:11px;color:#555"><div style="width:6px;height:6px;border-radius:50%;background:var(--orange);flex-shrink:0;margin-top:3px"></div><div><strong style="color:white">Pragmatic & Results-Driven</strong> — cut through the noise, solve it</div></div>
@@ -1102,7 +1102,7 @@ html,body{
 
       <!-- Golden rule full width -->
       <div class="card" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(212,120,138,.07),rgba(232,160,122,.04));border-color:rgba(212,120,138,.18)">
-        <div style="font-size:11px;font-weight:700;background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">Golden rule</div>
+        <div style="font-size:11px;font-weight:700;color:#C45A6E;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">Golden rule</div>
         <div style="font-size:13px;color:rgba(255,255,255,.7);line-height:1.6;font-style:italic">"Don't just ask what you have to do. Ask what actually helps the company grow. That mindset changes everything."</div>
       </div>
     </div>
@@ -1110,9 +1110,68 @@ html,body{
 </div>
 
 <!-- 
-     S13 · CLOSING
+     S13 · GHENT SURVIVAL GUIDE
  -->
 <div class="slide" id="slide-12">
+  <div class="orb" style="width:380px;height:380px;background:radial-gradient(circle,rgba(126,184,212,.22) 0%,transparent 70%);top:-80px;right:-40px"></div>
+  <div class="orb" style="width:250px;height:250px;background:radial-gradient(circle,rgba(232,160,122,.18) 0%,transparent 70%);bottom:-60px;left:-30px"></div>
+  <div class="in">
+    <div class="lbl">Practical · City Guide</div>
+    <h2 class="h1">Ghent <span class="g">Survival Guide</span></h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px">
+
+      <div style="background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.07);border-radius:16px;padding:20px 18px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,rgba(212,120,138,.2),rgba(232,160,122,.2));display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:800;color:#C45A6E">LEZ</div>
+          <div style="font-size:13px;font-weight:700;color:#1A1A1A">The Low Emission Zone (LEZ)</div>
+        </div>
+        <p style="font-size:11px;color:#555;line-height:1.6;margin-bottom:10px">If you're coming by car, register your license plate <strong style="color:#1A1A1A">BEFORE</strong> you drive into the city. Otherwise you'll get an automatic fine — not the best way to start your internship.</p>
+        <div style="background:rgba(212,120,138,.07);border:1px solid rgba(212,120,138,.18);border-radius:8px;padding:9px 12px;font-size:10px;color:#B05070;line-height:1.5">
+          <strong style="color:#1A1A1A">How to register:</strong> Go to <strong>stad.gent/lez</strong> — takes 5 minutes. Do it before your first day.
+        </div>
+      </div>
+
+      <div style="background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.07);border-radius:16px;padding:20px 18px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,rgba(126,184,212,.2),rgba(212,120,138,.15));display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:800;color:#4A7A94">HOU</div>
+          <div style="font-size:13px;font-weight:700;color:#1A1A1A">Housing</div>
+        </div>
+        <p style="font-size:11px;color:#555;line-height:1.6;margin-bottom:10px">Start looking <strong style="color:#1A1A1A">early. Really early.</strong> Ghent fills up fast for short-term rentals. Waiting until the last minute means paying way too much on Airbnb.</p>
+        <div style="background:rgba(126,184,212,.1);border:1px solid rgba(126,184,212,.22);border-radius:8px;padding:9px 12px;font-size:10px;color:#3A6A84;line-height:1.5">
+          <strong style="color:#1A1A1A">Good platforms:</strong> ColocHousing, Wing Upkot, ikot.be — start there before anything else.
+        </div>
+      </div>
+
+      <div style="background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.07);border-radius:16px;padding:20px 18px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,rgba(232,160,122,.2),rgba(212,120,138,.15));display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:800;color:#B07040">AFT</div>
+          <div style="font-size:13px;font-weight:700;color:#1A1A1A">After Work</div>
+        </div>
+        <p style="font-size:11px;color:#555;line-height:1.6;margin-bottom:10px">Ghent is a great city. Good food, good bars, good people. The old town is worth exploring. And if you like Belgian beer — you are <strong style="color:#1A1A1A">in the right place</strong>.</p>
+        <div style="background:rgba(61,171,142,.07);border:1px solid rgba(61,171,142,.18);border-radius:8px;padding:9px 12px;font-size:10px;color:#2D7A60;line-height:1.5">
+          <strong style="color:#1A1A1A">Tip:</strong> Don't just go home after work. The city is part of the experience — enjoy it.
+        </div>
+      </div>
+
+      <div style="background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.07);border-radius:16px;padding:20px 18px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,rgba(139,114,212,.18),rgba(126,184,212,.15));display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:800;color:#7055C0">MOV</div>
+          <div style="font-size:13px;font-weight:700;color:#1A1A1A">Getting Around</div>
+        </div>
+        <p style="font-size:11px;color:#555;line-height:1.6;margin-bottom:10px">Ghent is very <strong style="color:#1A1A1A">bike-friendly</strong>. Most people cycle everywhere. Public transport works well too. The city center is compact — no car needed day-to-day.</p>
+        <div style="background:rgba(212,164,61,.07);border:1px solid rgba(212,164,61,.22);border-radius:8px;padding:9px 12px;font-size:10px;color:#8A6A20;line-height:1.5">
+          <strong style="color:#1A1A1A">Blue-bike:</strong> shared bikes available everywhere — cheap and convenient for the first days.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- 
+     S14 · CLOSING
+ -->
+<div class="slide" id="slide-13">
   <!-- Gradient rings like uman cover slides -->
   <div class="close-ring" style="width:640px;height:640px;top:50%;left:50%;transform:translate(-50%,-50%);border:1px solid rgba(212,120,138,.2);animation:sp 42s linear infinite"></div>
   <div class="close-ring" style="width:420px;height:420px;top:50%;left:50%;transform:translate(-50%,-50%);border:1px solid rgba(126,184,212,.22);animation:sp 28s linear infinite reverse"></div>
@@ -1121,7 +1180,7 @@ html,body{
 
   <div class="close-content">
     <div class="logo-c" style="width:48px;height:48px;font-size:18px;margin:0 auto 22px">U</div>
-    <h2 class="close-title">Prep like a machine,<br><span class="cg">sell like a human.</span></h2>
+    <h2 class="close-title">Prep like a machine,<br><span class="cg" style="-webkit-text-fill-color:unset">sell like a human.</span></h2>
     <p class="close-sub">You now have a solid foundation to understand uman, what we sell, how we sell it, and how we work together. The rest comes with time and action.</p>
     <div class="close-pills">
       <div class="cpill2">Who we are </div>
@@ -1145,7 +1204,7 @@ html,body{
 </nav>
 
 <script>
-const TOTAL = 13;
+const TOTAL = 14;
 let cur = 0, tr = false;
 
 // Build dots
